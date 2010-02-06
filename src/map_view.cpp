@@ -1,7 +1,7 @@
 #include "map_view.h"
 #include <GL/gl.h>
 
-map_view::map_view(Map& map): _map(map), _scroll_x(0), _scroll_y(0) {
+MapView::MapView(Map& map): _map(map), _scroll_x(0), _scroll_y(0) {
     _dl = glGenLists(1);
     glNewList(_dl, GL_COMPILE);
 
@@ -63,12 +63,12 @@ map_view::map_view(Map& map): _map(map), _scroll_x(0), _scroll_y(0) {
     glEndList();
 }
 
-void map_view::scroll(float dx, float dy) {
+void MapView::scroll(float dx, float dy) {
     _scroll_x += dx;
     _scroll_y += dy;
 }
 
-void map_view::draw(unsigned int dticks) {
+void MapView::draw(unsigned int dticks) {
     glPushMatrix();
     glTranslatef(-_scroll_x, 0.0f, -_scroll_y);
     glCallList(_dl);

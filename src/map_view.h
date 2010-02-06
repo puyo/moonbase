@@ -5,11 +5,11 @@
 #include "util.h"
 #include <GL/gl.h>
 
-class map_view {
+class MapView {
 
     public: // constructors
 
-        map_view(Map& map);
+        MapView(Map& map);
 
     public:
 

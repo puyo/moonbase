@@ -133,7 +133,7 @@ void game_loop(Game& game) {
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos0);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightcol);
 
-    map_view map_view(*map);
+    MapView map_view(*map);
     map_view.scroll(map->w() * 5.0f, map->h() * 5.0f);
     SDL_Event event;
     bool done = 0;
