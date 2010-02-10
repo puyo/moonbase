@@ -1,4 +1,4 @@
-#include "map_view.h"
+#include "mapview.h"
 #include <GL/gl.h>
 
 static GLfloat tile_ambient[] = { 0.5f, 0.0f, 0.0f, 1.0f };

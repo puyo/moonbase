@@ -3,7 +3,7 @@
 #include "util.h"
 #include "game.h"
 #include "map.h"
-#include "map_view.h"
+#include "mapview.h"
 #include "video.h"
 #include <string>
 #include <GL/glut.h>

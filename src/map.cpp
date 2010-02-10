@@ -14,13 +14,14 @@ static void smooth(Map& map) {
         { 0, -1 },
         { 0, +1 },
     };
+    static int noffsets= 4;
     for (unsigned j = 0; j < map.h(); ++j) {
         for (unsigned i = 0; i < map.w(); ++i) {
             Tile *t = map.tile(i, j);
             unsigned int h = t->height();
             count = 0;
             unsigned int alt_h = 0;
-            for (unsigned o = 0; o < 4; ++o) {
+            for (unsigned o = 0; o < noffsets; ++o) {
                 unsigned int other_h = map.tile(
                         (i + offsets[o][0]) % map.w(), 
                         (j + offsets[o][1]) % map.h() )->height();
