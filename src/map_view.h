@@ -6,19 +6,15 @@
 #include <GL/gl.h>
 
 class MapView {
-
-    public: // constructors
-
-        MapView(Map& map);
-
     public:
-
+        MapView(Map& map);
+    public:
         void draw(unsigned int dticks);
-
         void scroll(float dx, float dy);
-
-    private: // data
-
+    private:
+        void draw_tiles(unsigned int dticks);
+        void draw_water(unsigned int dticks);
+    private:
         Map& _map;
         float _scroll_x;
         float _scroll_y;

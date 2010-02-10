@@ -15,20 +15,16 @@ class Projectile {
 
     public: // constructors
 
-        Projectile(Game& game, ID id, Player::ID owner, std::string lua_filename): _game(&game), _lua_filename(lua_filename), _energy_cost(1) {
-            // TODO: load and evaluate lua file
-            //
-            // Lua defines properties such as cost, on_hit (damage?), on_miss
-            // (create a building?)
-        }
+        Projectile(Game& game, ID id, Player::ID owner): 
+            _game(game), 
+            _energy_cost(1) { }
 
     public:
 
     private: // data
 
-        Game *_game;
+        Game& _game;
         ID _id;
-        std::string _lua_filename;
         Player::ID _owner;
         Building::ID _source;
         unsigned int _energy_cost;

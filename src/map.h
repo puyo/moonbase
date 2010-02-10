@@ -16,7 +16,7 @@ class Map {
 
     public: // constructors
 
-        Map(Game& game, std::string lua_filename);
+        Map(Game& game);
 
         virtual ~Map() {
             std::for_each(_tiles.begin(), _tiles.end(), delete_object());
@@ -38,15 +38,14 @@ class Map {
 
     private: // data
 
-        Game& _game;
-        std::string _lua_filename;
+        Game& _game; // back reference
         unsigned int _w; // width in tiles
         unsigned int _h; // height in tiles
         TileArray _tiles;
 
     private: // uncopyable
 
-        Map(const Map& map):_game(map._game) {
+        Map(const Map& map): _game(map._game) {
             // copy constructor
         }
 };

@@ -100,7 +100,7 @@ void game_loop(Game& game) {
     game.generate_map();
     Map *map = game.map();
 
-    if (map == NULL){
+    if (map == NULL) {
         set_fatal_error("cannot enter game loop until game map is loaded");
         set_next_game_mode(mode_fatal_error);
         return;
@@ -207,7 +207,6 @@ void game_loop(Game& game) {
 
 int main(int argc, char **argv) {
     // Initial state
-    // TODO: put this in a lua config file to save recompilation for debugging
     set_next_game_mode(mode_logo);
 
     // Don't let fatal_error point to a random memory location

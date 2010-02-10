@@ -22,7 +22,7 @@ void Game::load_map(std::string name) {}
 //! Generates a map randomly
 void Game::generate_map() {
     log("Game::generate_map");
-    _map = new Map(*this, "");
+    _map = new Map(*this);
 }
 
 void Game::think(unsigned int dticks) {

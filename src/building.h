@@ -14,11 +14,7 @@ class Building {
 
     public: // constructors
 
-        Building(Game& game, ID id, std::string lua_filename): _game(&game), _id(id), _lua_filename(lua_filename) {
-            // TODO: load and evaluate lua file
-            //
-            // Lua defines properties such as HP, HP total, a list of
-            // projectiles it can fire, and callbacks like on_hit, on_destroyed
+        Building(Game& game, ID id): _game(&game), _id(id) {
         }
 
     public:
@@ -27,7 +23,6 @@ class Building {
 
         Game *_game;
         ID _id;
-        std::string _lua_filename;
         unsigned int _player;
         unsigned int _hp_total;
         unsigned int _hp_remaining;
