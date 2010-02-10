@@ -14,14 +14,16 @@ static void smooth(Map& map) {
         { 0, -1 },
         { 0, +1 },
     };
-    for (unsigned j = 1; j < (map.h() - 1); ++j) {
-        for (unsigned i = 1; i < (map.w() - 1); ++i) {
+    for (unsigned j = 0; j < map.h(); ++j) {
+        for (unsigned i = 0; i < map.w(); ++i) {
             Tile *t = map.tile(i, j);
             unsigned int h = t->height();
             count = 0;
             unsigned int alt_h = 0;
             for (unsigned o = 0; o < 4; ++o) {
-                unsigned int other_h = map.tile(i + offsets[o][0], j + offsets[o][1])->height();
+                unsigned int other_h = map.tile(
+                        (i + offsets[o][0]) % map.w(), 
+                        (j + offsets[o][1]) % map.h() )->height();
                 if (other_h == h) {
                     count++;
                 } else {
@@ -29,8 +31,6 @@ static void smooth(Map& map) {
                 }
             }
             if (count < 1) {
-                //unsigned rando = random() % 4;
-                //t->set_height(map.tile(i + offsets[rando][0], j + offsets[rando][1])->height());
                 t->set_height(alt_h);
             }
         }
@@ -112,7 +112,8 @@ Map::Map(Game& game):
         }
     }
     // generate a random map
-    srandom(time(0));
+    //srandom(time(0));
+    srandom(0);
     makefractal(*this, 7, _w / 4, _h / 4);
     smooth(*this);
 }
