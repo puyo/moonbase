@@ -4,23 +4,14 @@
 #include "v3d.h"
 #include <string>
 
-class Game; // forward delcaration
+class Game;
 
 class Building {
-
-    public: // types
-
-        typedef unsigned int ID;
-
-    public: // constructors
-
-        Building(Game& game, ID id): _game(&game), _id(id) {
-        }
-
     public:
-
-    private: // data
-
+        typedef unsigned int ID;
+    public:
+        Building(Game& game, ID id): _game(&game), _id(id) { }
+    private:
         Game *_game;
         ID _id;
         unsigned int _player;

@@ -2,9 +2,11 @@
 #include <ctime>
 #include <cstdlib>
 #include <cmath>
+#include <boost/assign/list_of.hpp>
+#include <vector>
 
-static unsigned int heights[] = { 0, 10, 10, 10, 10, 10, 10, 10, 20, 20 };
-unsigned int nheights = 10;
+using namespace std;
+using namespace boost::assign;
 
 static void smooth(Map& map) {
     int count;
@@ -17,70 +19,62 @@ static void smooth(Map& map) {
     static int noffsets= 4;
     for (unsigned j = 0; j < map.h(); ++j) {
         for (unsigned i = 0; i < map.w(); ++i) {
+            // if terrain around this tile is very different, then set this
+            // tile to one of the terrain types around it
             Tile *t = map.tile(i, j);
-            unsigned int h = t->height();
+            Tile::Type type = t->type();
             count = 0;
-            unsigned int alt_h = 0;
-            for (unsigned o = 0; o < noffsets; ++o) {
-                unsigned int other_h = map.tile(
+            Tile::Type alt_type;
+            for (int o = 0; o < noffsets; ++o) {
+                Tile::Type other_type = map.tile(
                         (i + offsets[o][0]) % map.w(), 
-                        (j + offsets[o][1]) % map.h() )->height();
-                if (other_h == h) {
+                        (j + offsets[o][1]) % map.h() )->type();
+                if (other_type == type) {
                     count++;
                 } else {
-                    alt_h = other_h;
+                    alt_type = other_type;
                 }
             }
-            if (count < 1) {
-                t->set_height(alt_h);
+            if (count < 2) {
+                t->set_type(alt_type);
             }
         }
     }
 }
 
-void makefractal(Map& map, int energy, int xstep, int ystep) {
-    logf("makefractal(%d, %d)", xstep, ystep);
+void make_fractal(Map& map, int energy, int xstep, int ystep) {
+    logf("make_fractal(%d, %d)", xstep, ystep);
     for (unsigned int y = 0; y < map.h(); y += ystep) {
         for (unsigned int x = 0; x < map.h(); x += xstep) {
-            // The inner loop calculates (cx,cy)
-            // this is the point from which to copy map properties
-
-            // add random offsets
-            //unsigned int offset = random() % 2*energy;
-            unsigned int offset = 1;
+            // (cx,cy), the point from which to copy map properties
+            unsigned int offset = random() % 2*energy;
             unsigned int cx = x + xstep*offset;
             unsigned int cy = y + ystep*offset;
 
-            // truncate to nearest multiple of step*2
-            // since step*2 is the previous detail level calculated
+            // truncate to nearest multiple of step*2 since step*2 is the
+            // previous detail level calculated
             cx = (cx/(xstep*2))*xstep*2;
             cy = (cy/(ystep*2))*ystep*2;
 
-            // wrap around to reference world as torus
-            // also guarantees getCell() and setCell() are within bounds
+            // wrap around to reference world as torus also guarantees we are
+            // within bounds
             cx %= map.w();
             cy %= map.h();
 
-            // copy from (cx,cy) to (x,y)
-            unsigned int h = map.tile(cx, cy)->height();
+            // copy from (cx,cy) to (x,y) with a chance of randomising
+            int type = static_cast<int>(map.tile(cx, cy)->type());
             int percent_random = 10;
             if ((random() % 100) < percent_random) {
                 if (random() % 2)
-                    h += 10.0f;
+                    ++type;
                 else
-                    h -= 10.0f;
-                if (h < heights[0])
-                    h = heights[0];
-                else if (h > heights[nheights - 1])
-                    h = heights[nheights - 1];
+                    --type;
+                if (type < 0)
+                    type = 0;
+                else if (type >= (int)Tile::ntypes)
+                    type = Tile::ntypes - 1;
             }
-            //if (percent_random != 0) {
-                //h = (unsigned int)(h * 
-                        //(float)((100 - percent_random/2) + 
-                            //(random() % (percent_random+1))) /
-                        //100.0f);
-            //}
-            map.tile(x, y)->set_height(h);
+            map.tile(x, y)->set_type(static_cast<Tile::Type>(type));
         }
     }
     bool done = true;
@@ -94,28 +88,36 @@ void makefractal(Map& map, int energy, int xstep, int ystep) {
         done = false;
     }
     if (!done)
-        makefractal(map, energy - 1, xs, ys);
+        make_fractal(map, energy - 1, xs, ys);
 }
 
-Map::Map(Game& game):
-    _game(game), _w(0), _h(0) {
+Map::Map(Game& game): _game(game), _w(0), _h(0) {
     log("Map::Map");
-    _w = 64;
-    _h = 64;
+
+    _w = 32;
+    _h = 32;
     _tiles.resize(_w * _h);
+
+    // generate a random map
+
+    static vector<Tile::Type> seed_types = list_of
+        (Tile::WATER)
+        (Tile::WATER)
+        (Tile::LOW)
+        (Tile::LOW)
+        (Tile::LOW)
+        (Tile::HIGH) 
+        (Tile::HIGH);
+
     for (unsigned int y = 0; y < _h; ++y) {
         for (unsigned int x = 0; x < _w; ++x) {
             Tile *t = new Tile(*this);
-            //t->set_height(random() % 20);
-            t->set_height(heights[random() % nheights]);
+            t->set_type(seed_types[random() % seed_types.size()]);
             _tiles[_w * y + x] = t;
-
         }
     }
-    // generate a random map
-    //srandom(time(0));
-    srandom(0);
-    makefractal(*this, 7, _w / 4, _h / 4);
+    srandom(0); // always do random map 0, so we can compare versions
+    make_fractal(*this, 7, _w / 4, _h / 4);
     smooth(*this);
 }
 

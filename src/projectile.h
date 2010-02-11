@@ -6,23 +6,18 @@
 #include "building.h"
 #include <string>
 
-class Game; // forward declaration
+class Game;
 
 class Projectile {
-    public: // types
-
+    public:
         typedef unsigned int ID;
-
-    public: // constructors
-
+    public:
         Projectile(Game& game, ID id, Player::ID owner): 
             _game(game), 
+            _id(id),
+            _owner(owner),
             _energy_cost(1) { }
-
-    public:
-
-    private: // data
-
+    private:
         Game& _game;
         ID _id;
         Player::ID _owner;

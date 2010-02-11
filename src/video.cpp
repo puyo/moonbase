@@ -4,9 +4,6 @@
 
 int Video::init(int width, int height, int bpp, bool fullscreen) {
 
-    // (gak) code stolen and modified from sdl/test/testgl.c
-    // XXX: THIS IS UGLY CODE.
-
     int video_flags;
     int rgb_size[3];
     int value;
@@ -101,6 +98,7 @@ int Video::init(int width, int height, int bpp, bool fullscreen) {
     logf("SDL_GL_DEPTH_SIZE: requested %d, got %d", bpp, value );
     SDL_GL_GetAttribute( SDL_GL_DOUBLEBUFFER, &value );
     logf("SDL_GL_DOUBLEBUFFER: requested 1, got %d", value);
+
 //            if ( fsaa ) {
 //                SDL_GL_GetAttribute( SDL_GL_MULTISAMPLEBUFFERS, &value );
 //                log(va("SDL_GL_MULTISAMPLEBUFFERS: requested 1, got %d\n", value ));

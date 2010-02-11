@@ -2,19 +2,12 @@
 #define POINT_H 1
 
 class Point {
-
-    public: // constructors
-
-        Point(int x, int y): _x(x), _y(y) {
-        }
-
     public:
-
+        Point(int x, int y): _x(x), _y(y) { }
+    public:
         int x() const { return _x; }
         int y() const { return _y; }
-
-    public: // operators
-
+    public:
         Point operator+(const Point& p) const {
             return Point(_x + p._x, _y + p._y);
         }
@@ -22,9 +15,7 @@ class Point {
         Point operator-(const Point& p) const {
             return Point(_x - p._x, _y - p._y);
         }
-
-    private: // data
-
+    private:
         int _x;
         int _y;
 };

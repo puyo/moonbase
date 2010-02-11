@@ -1,24 +1,16 @@
 #ifndef PLAYER_H
 #define PLAYER_H 1
 
-class Game; // forward declaration
+class Game;
 
 class Player {
-    public: // types
-
-        typedef unsigned int ID;
-
-    public: // constructors
-
-        Player(Game& game, ID id): _game(&game), _id(id) {
-        }
-
     public:
-
+        typedef unsigned int ID;
+    public:
+        Player(Game& game, ID id): _game(&game), _id(id) { }
+    public:
         ID id() const { return _id; }
-
-    private: // data
-
+    private:
         Game *_game;
         ID _id;
 };

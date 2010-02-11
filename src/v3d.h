@@ -3,11 +3,9 @@
 
 class V3D {
     public:
-
         float x, y, z;
 
-        V3D(): x(0.0f), y(0.0f), z(0.0f) {
-        }
+        V3D(): x(0.0f), y(0.0f), z(0.0f) { }
 };
 
 #endif

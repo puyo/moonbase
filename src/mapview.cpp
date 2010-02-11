@@ -1,5 +1,10 @@
 #include "mapview.h"
 #include <GL/gl.h>
+#include <boost/assign/list_of.hpp>
+#include <map>
+
+using namespace std;
+using namespace boost::assign;
 
 static GLfloat tile_ambient[] = { 0.5f, 0.0f, 0.0f, 1.0f };
 static GLfloat tile_diffuse[] = { 0.0f, 0.5f, 0.0f, 1.0f };
@@ -7,6 +12,10 @@ static GLfloat tile_specular[] = { 0.0f, 0.0f, 1.0f, 1.0f };
 static GLfloat tile_emission[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 
 static float tile_size = 10.0f;
+static map<Tile::Type, int> tile_height = map_list_of
+    (Tile::WATER, 0)
+    (Tile::LOW,  10)
+    (Tile::HIGH, 20);
 
 MapView::MapView(Map& map): _map(map), _scroll_x(100), _scroll_y(100) {
 }
@@ -14,6 +23,10 @@ MapView::MapView(Map& map): _map(map), _scroll_x(100), _scroll_y(100) {
 void MapView::scroll(float dx, float dy) {
     _scroll_x += dx;
     _scroll_y += dy;
+}
+
+static inline int height(Tile *t) {
+    return tile_height[t->type()];
 }
 
 void MapView::draw_tiles(unsigned int dticks) {
@@ -31,7 +44,6 @@ void MapView::draw_tiles(unsigned int dticks) {
             Tile *t2 = _map.tile(x, y + 1);
             Tile *t3 = _map.tile(x + 1, y + 1);
             Tile *t4 = _map.tile(x + 1, y);
-            //logf("%d", t->height());
             if (t1 && t2 && t3 && t4) {
                 glDisable(GL_LIGHTING);
 
@@ -39,10 +51,10 @@ void MapView::draw_tiles(unsigned int dticks) {
                 glPolygonMode(GL_FRONT, GL_FILL);
                 glBegin(GL_TRIANGLE_STRIP);
                 glColor3f(0.0f, 0.0f, 0.0f);
-                glVertex3f(x * tile_size, t1->height(), y * tile_size);
-                glVertex3f(x * tile_size, t2->height(), (y + 1) * tile_size);
-                glVertex3f((x + 1) * tile_size, t4->height(), y * tile_size);
-                glVertex3f((x + 1) * tile_size, t3->height(), (y + 1) * tile_size);
+                glVertex3f(x * tile_size, height(t1), y * tile_size);
+                glVertex3f(x * tile_size, height(t2), (y + 1) * tile_size);
+                glVertex3f((x + 1) * tile_size, height(t4), y * tile_size);
+                glVertex3f((x + 1) * tile_size, height(t3), (y + 1) * tile_size);
                 glEnd();
 
                 glDepthFunc(GL_LEQUAL);
@@ -50,17 +62,17 @@ void MapView::draw_tiles(unsigned int dticks) {
                 glPolygonMode(GL_FRONT, GL_LINE);
                 glBegin(GL_TRIANGLE_STRIP);
 
-                glColor3f(t1->height() / 10.0f, 0.0f, 10.0f - t1->height() / 10.0f);
-                glVertex3f(x * tile_size, t1->height() + 0.1f, y * tile_size);
+                glColor3f(height(t1) / 10.0f, 0.0f, 10.0f - height(t1) / 10.0f);
+                glVertex3f(x * tile_size, height(t1) + 0.1f, y * tile_size);
 
-                glColor3f(t2->height() / 10.0f, 0.0f, 10.0f - t2->height() / 10.0f);
-                glVertex3f(x * tile_size, t2->height() + 0.1f, (y + 1) * tile_size);
+                glColor3f(height(t2) / 10.0f, 0.0f, 10.0f - height(t2) / 10.0f);
+                glVertex3f(x * tile_size, height(t2) + 0.1f, (y + 1) * tile_size);
 
-                glColor3f(t4->height() / 10.0f, 0.0f, 10.0f - t4->height() / 10.0f);
-                glVertex3f((x + 1) * tile_size, t4->height() + 0.1f, y * tile_size);
+                glColor3f(height(t4) / 10.0f, 0.0f, 10.0f - height(t4) / 10.0f);
+                glVertex3f((x + 1) * tile_size, height(t4) + 0.1f, y * tile_size);
 
-                glColor3f(t3->height() / 10.0f, 0.0f, 10.0f - t3->height() / 10.0f);
-                glVertex3f((x + 1) * tile_size, t3->height() + 0.1f, (y + 1) * tile_size);
+                glColor3f(height(t3) / 10.0f, 0.0f, 10.0f - height(t3) / 10.0f);
+                glVertex3f((x + 1) * tile_size, height(t3) + 0.1f, (y + 1) * tile_size);
 
                 glEnd();
 

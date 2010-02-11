@@ -4,20 +4,11 @@
 #include "game.h"
 
 class Client {
-
     public:
-
-        Client(Game& game) {
-            _game = game;
-        }
+        Client(Game& game): _game(game) { }
         virtual ~Client();
-
-    public:
-
-
     private:
-        Game *_game;
-
+        Game& _game;
 }
 
 #endif

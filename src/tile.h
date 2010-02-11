@@ -2,34 +2,24 @@
 #define TILE_H 1
 
 #include <cstdlib>
+#include "building.h"
 
-class Map; // forward declaration
+class Map;
 
 class Tile {
-
-#define GROUND 0
-
-#define B_NONE 0
-
-    public: // constructors
-
-        Tile(Map& map);
-
     public:
-
-        unsigned int height() const {
-            return _height;
-        }
-
-        void set_height(unsigned int value) {
-            _height = value;
-        }
-    private: // data
-
+        typedef enum { WATER, LOW, HIGH } Type;
+        static const unsigned ntypes = 3;
+    public:
+        Tile(Map& map);
+    public:
+        Type type() const { return _type; }
+        void set_type(Type value) { _type = value; }
+    private:
         Map& _map;
-        unsigned int _height; //! determines the texture to use (?) is this feature creep? (gak)
-        bool _resources; //! whether this tile has resources
-        unsigned int _building; //! which building is on this tile
+        Type _type;
+        bool _resources; //! whether this tile has energy resources
+        Building::ID _building_id; //! which building is on this tile
 };
 
 #endif
