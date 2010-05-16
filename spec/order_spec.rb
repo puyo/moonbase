@@ -11,7 +11,7 @@ describe Order do
         SkipOrder.new
       end.should_not raise_exception
       lambda do
-        ShootOrder.new(:from => Hub.new, 
+        ShootOrder.new(:from => Hub.new(:position => Vector3D.new(0, 0, 0)),
                        :projectile_class => Bomb,
                        :direction => 20.0, 
                        :power => 30.0)

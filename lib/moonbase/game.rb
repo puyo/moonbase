@@ -1,5 +1,6 @@
 require 'moonbase/map'
 require 'moonbase/order'
+require 'moonbase/vector3d'
 
 module Moonbase
   class Game
@@ -19,7 +20,14 @@ module Moonbase
     end
 
     def setup
-      @map = Map.create_predefined(self)
+      # predefined for now
+      @map = Map.new(:width => 100.0,
+                     :height => 100.0,
+                     :wind => Wind.new)
+      h1 = Hub.new(:position => Vector3D.new(0, 0, 0))
+      h2 = Hub.new(:position => Vector3D.new(50, 50, 0))
+      add_building(players[0], h1)
+      add_building(players[1], h2)
     end
 
     # setup
@@ -88,7 +96,7 @@ module Moonbase
     end
 
     def process_shoot_order(player, order)
-      @projectiles[player].push(order.projectile_class.new)
+      @projectiles[player].push(order.new_projectile)
     end
 
     def awaiting_orders?

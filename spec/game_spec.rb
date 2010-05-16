@@ -25,7 +25,7 @@ describe Game do
 
     it 'causes projectiles to move' do
       player = mock('test player')
-      building = Hub.new
+      building = Hub.new(:position => Vector3D.origin)
       order = ShootOrder.new(:from => building, :direction => 0, :power => 10, :projectile_class => Bomb)
       player.should_receive(:request_order).and_return(order)
       game = Game.new(:players => [player])

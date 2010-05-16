@@ -1,8 +1,9 @@
 module Moonbase
   class Building
+    attr_reader :position
+
     def initialize(opts = {})
-      @x = opts[:x] || 0.0
-      @y = opts[:y] || 0.0
+      @position = opts[:position] || raise('Must specify building position')
     end
   end
 
