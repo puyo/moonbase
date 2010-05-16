@@ -112,7 +112,7 @@ module Moonbase
     end
 
     def on_turn_start
-      puts 'on_turn_start'
+      #puts 'on_turn_start'
       @players.each{|p| p.on_turn_start }
     end
   end
