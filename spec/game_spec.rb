@@ -14,7 +14,7 @@ describe Game do
 
   describe 'tick' do
     it 'requests orders from players' do
-      player = mock('test player')
+      player = mock('skippy')
       player.stub!(:energy).and_return(0)
       player.should_receive(:request_order).and_return(SkipOrder.new)
       game = Game.new(:players => [player])
@@ -24,7 +24,7 @@ describe Game do
     end
 
     it 'causes projectiles to move' do
-      player = mock('test player')
+      player = mock('shoota')
       building = Hub.new(:position => Vector3D.origin)
       order = ShootOrder.new(:from => building, 
                              :direction => 0, 
@@ -42,13 +42,23 @@ describe Game do
     end
 
     it 'returns to orders phase once projectiles are finished' do
-      player = mock('test player')
+      player = mock('skippy')
       player.should_receive(:request_order).and_return(SkipOrder.new)
-      player.should_receive(:on_turn_start)
       game = Game.new(:players => [player])
+      player.should_receive(:on_turn_start).with(game)
       game.setup
       game.tick # get orders
       game.tick # try moving, realise nothing needs to be done, go back for orders
+    end
+
+    it 'marks phase as quit if all players leave' do
+      player = mock('leaver')
+      player.should_receive(:request_order).and_return(QuitOrder.new)
+      game = Game.new(:players => [player])
+      game.setup
+      game.tick # get orders
+      game.tick # process orders
+      game.phase.should == :quit
     end
   end
 end

@@ -51,7 +51,9 @@ module Moonbase
       case @phase
       when :orders then tick_orders
       when :move then tick_move
+      when :quit then return false
       end
+      return true
     end
 
     def tick_move
@@ -74,8 +76,8 @@ module Moonbase
         end
       end
       if not awaiting_orders?
-        process_orders
         @phase = :move
+        process_orders
       end
     end
 
@@ -102,9 +104,16 @@ module Moonbase
       @orders[player] = order
     end
 
+    def remove_player(player)
+      @players.delete(player)
+      if @players.empty?
+        @phase = :quit
+      end
+    end
+
     def on_turn_start
       #puts 'on_turn_start'
-      @players.each{|p| p.on_turn_start }
+      @players.each{|p| p.on_turn_start(self) }
     end
   end
 end

@@ -27,4 +27,10 @@ module Moonbase
       game.add_projectile(player, new_projectile)
     end
   end
+
+  class QuitOrder < Order
+    def process(game, player)
+      game.remove_player(player)
+    end
+  end
 end
