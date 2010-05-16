@@ -81,22 +81,9 @@ module Moonbase
 
     def process_orders
       @orders.each do |player, order|
-        process_order(player, order)
+        order.process(self, player)
       end
       @orders.clear
-    end
-
-    def process_order(player, order)
-      case order
-      when SkipOrder
-        # don't need to do anything! :-)
-      when ShootOrder
-        process_shoot_order(player, order)
-      end
-    end
-
-    def process_shoot_order(player, order)
-      @projectiles[player].push(order.new_projectile)
     end
 
     def awaiting_orders?
@@ -105,6 +92,10 @@ module Moonbase
 
     def add_building(player, building)
       @buildings[player].push(building)
+    end
+
+    def add_projectile(player, projectile)
+      @projectiles[player].push(projectile)
     end
 
     def set_order(player, order)

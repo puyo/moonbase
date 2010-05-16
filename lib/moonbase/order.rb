@@ -3,6 +3,9 @@ module Moonbase
   end
 
   class SkipOrder < Order
+    def process(game, player)
+      # don't need to do anything! :-)
+    end
   end
 
   class ShootOrder < Order
@@ -18,6 +21,10 @@ module Moonbase
     def new_projectile
       @projectile_class.new(:position => @from.position.dup,
                             :velocity => Vector3D.new(10, 10, 20))
+    end
+
+    def process(game, player)
+      game.add_projectile(player, new_projectile)
     end
   end
 end
