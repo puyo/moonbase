@@ -5,7 +5,6 @@
 #include <SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 
 static float demo3d_rotate = 0.0f;
 
@@ -69,7 +68,6 @@ void draw_cube(void){
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
     glMaterialfv(GL_FRONT, GL_EMISSION, emission);
-    glutSolidCube(0.5f);
 
     glPopMatrix(); //Stop to draw something in the empty room.
 }

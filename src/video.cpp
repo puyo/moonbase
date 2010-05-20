@@ -1,21 +1,17 @@
 #include "video.h"
 #include "util.h"
-#include <GL/glut.h>
+#include <GL/gl.h>
+#include <cstdio>
 
 int Video::init(int width, int height, int bpp, bool fullscreen) {
-
     int video_flags;
     int rgb_size[3];
     int value;
 
-    glClearColor(0.0,0.0,0.0,0.0);
-
-    int argcp = 0;
-    glutInit(&argcp, 0);
-
     if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 ) {
-        // flog(va(stderr,"Couldn't initialize SDL: %s\n",SDL_GetError());
-        return 0;
+        logf("Couldn't initialize SDL: %s\n", SDL_GetError());
+        SDL_Quit();
+        exit(1);
     }
 
     /* See if we should detect the display depth */
@@ -77,10 +73,13 @@ int Video::init(int width, int height, int bpp, bool fullscreen) {
 //                SDL_GL_SetAttribute( SDL_GL_SWAP_CONTROL, 0 );
 //            }
 //
+
     if ( SDL_SetVideoMode( width, height, bpp, video_flags ) == NULL ) {
-        // flog(va(stderr, "Couldn't set GL mode: %s\n", SDL_GetError());
-        return 0;
+        logf("Couldn't set 300x300 GL video mode: %s\n", SDL_GetError());
+        SDL_Quit();
+        exit(1);
     }
+    SDL_WM_SetCaption("Moonbase", "moonbase");
 
     logf("Screen BPP: %d", SDL_GetVideoSurface()->format->BitsPerPixel);
     logf("GL vendor: %s", glGetString(GL_VENDOR));
@@ -114,11 +113,7 @@ int Video::init(int width, int height, int bpp, bool fullscreen) {
 //                log(va( "SDL_GL_SWAP_CONTROL: requested 1, got %d\n", value ));
 //            }
 
-    /* Set the window manager title bar */
-    SDL_WM_SetCaption( "SDL GL test", "testgl" );
+    glClearColor(0.0,0.0,0.0,0.0);
 
     return 1;
-
 }
-
-

@@ -3,7 +3,7 @@
 
 #include "map.h"
 #include "util.h"
-#include <GL/gl.h>
+#include <SDL/SDL_opengl.h>
 
 class MapView {
     public:

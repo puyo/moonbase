@@ -6,7 +6,6 @@
 #include "mapview.h"
 #include "video.h"
 #include <string>
-#include <GL/glut.h>
 
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
@@ -189,7 +188,6 @@ void game_loop(Game& game) {
         glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
         glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
         glMaterialfv(GL_FRONT, GL_EMISSION, emission);
-        glutSolidCube(3.0f);
 
         game.think(dticks);
 
