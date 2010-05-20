@@ -7,11 +7,9 @@
 #include "video.h"
 #include <string>
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 768
-
 static void draw_axes(void){
     static float len = 30.0f;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_LIGHTING);
     glPushMatrix();
         glColor3f(1.0, 0.0, 0.0); // x = red
@@ -35,18 +33,7 @@ static void draw_axes(void){
     glEnable(GL_LIGHTING);
 }
 
-void game_loop(Game& game) {
-    log("game_loop");
-
-    game.generate_map();
-
-    // For now...
-    Map *map = game.map();
-    if (map == NULL) {
-        fprintf(stderr, "Cannot enter game loop until game map is loaded");
-        exit(1);
-    }
-
+static void init_viewport() {
     // Set up viewport etc.
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -73,6 +60,21 @@ void game_loop(Game& game) {
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos0);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightcol);
+}
+
+void game_loop(Game& game) {
+    log("game_loop");
+
+    game.generate_map();
+
+    // For now...
+    Map *map = game.map();
+    if (map == NULL) {
+        fprintf(stderr, "Cannot enter game loop until game map is loaded");
+        exit(1);
+    }
+
+    init_viewport();
 
     MapView map_view(*map);
     map_view.scroll(map->w() * 5.0f, map->h() * 5.0f);
@@ -117,32 +119,18 @@ void game_loop(Game& game) {
         unsigned int dticks = ticks - last_ticks;
         last_ticks = ticks;
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        draw_axes();
-
-        GLfloat ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-        GLfloat diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-        GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-        GLfloat emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-        glMaterialfv(GL_FRONT, GL_EMISSION, emission);
-
         game.think(dticks);
 
+        draw_axes();
         map_view.draw(dticks);
-
         SDL_GL_SwapBuffers();
-
     } while (!done);
 }
 
 // ----------------------------------------------------------------------------
 
 int main(int argc, char *argv[]) {
-    video_init(SCREEN_WIDTH, SCREEN_HEIGHT);
+    video_init(1024, 768);
     Game game;
     game_loop(game);
     return 0;

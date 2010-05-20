@@ -3,7 +3,7 @@
 #include <GL/gl.h>
 #include <cstdio>
 
-int video_init(int width, int height, int bpp, bool fullscreen) {
+void video_init(int width, int height, int bpp, bool fullscreen) {
     int video_flags;
     int rgb_size[3];
     int value;
@@ -116,6 +116,4 @@ int video_init(int width, int height, int bpp, bool fullscreen) {
     glClearColor(0.0,0.0,0.0,0.0);
     glViewport(0, 0, width, height);
     glClearDepth(0x7FFF);
-
-    return 1;
 }
