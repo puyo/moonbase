@@ -4,10 +4,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
-class Video {
-    public:
-        int init(int width, int height, int bpp=0, bool fullscreen=false);
-};
+int video_init(int width, int height, int bpp=0, bool fullscreen=false);
 
 #endif
 

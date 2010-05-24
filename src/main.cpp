@@ -10,32 +10,6 @@
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 
-typedef enum {
-    mode_normal_exit, //< Normal exit
-    mode_fatal_error, //< Unrecoverable error
-    mode_logo, //< Startup developer logo
-    mode_menu, //< Main game menu
-    mode_lobby, //< Game lobby
-    mode_game_loading, //< Game loading/waiting screen
-    mode_game, //< Game screen
-    mode_after_game, //< Post game screen,  scoreboard
-} game_mode;
-
-static std::string fatal_error;
-static unsigned char next_game_mode;
-static Video *video = NULL;
-
-//! Allow any module to set the last error
-void set_fatal_error(std::string err) {
-    fatal_error = err;
-}
-
-//! Set next game mode. This will determine which game mode will be started
-//after the current mode ends.
-void set_next_game_mode(game_mode mode) {
-    next_game_mode = mode;
-}
-
 static void draw_axes(void){
     static float len = 30.0f;
     glDisable(GL_LIGHTING);
@@ -61,48 +35,16 @@ static void draw_axes(void){
     glEnable(GL_LIGHTING);
 }
 
-//! Initialise video
-void init_screen(int *argc, char **argv) {
-    video = new Video();
-    video->init(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);  // "virtual" size
-    glClearDepth(0x7FFF);
-}
-
-void logo_loop(void) {
-    log("logo_loop");
-    // TODO
-    set_next_game_mode(mode_menu);
-}
-
-void error(void) {
-    logf("ERROR: %s", fatal_error.c_str());
-}
-
-void menu_loop(void) {
-    log("menu_loop");
-    // TODO
-    set_next_game_mode(mode_game);
-}
-
-void load_game_loop(Game& game) {
-    log("load_game_loop");
-    game.generate_map();
-    set_next_game_mode(mode_game);
-}
-
 void game_loop(Game& game) {
     log("game_loop");
 
-    // For now...
     game.generate_map();
-    Map *map = game.map();
 
+    // For now...
+    Map *map = game.map();
     if (map == NULL) {
-        set_fatal_error("cannot enter game loop until game map is loaded");
-        set_next_game_mode(mode_fatal_error);
-        return;
+        fprintf(stderr, "Cannot enter game loop until game map is loaded");
+        exit(1);
     }
 
     // Set up viewport etc.
@@ -137,7 +79,6 @@ void game_loop(Game& game) {
     SDL_Event event;
     bool done = 0;
     unsigned int last_ticks = 0;
-    log("game_loop: entering loop");
     float dx = 0, dy = 0;
     float scroll_speed = 2.0f;
     do {
@@ -196,46 +137,13 @@ void game_loop(Game& game) {
         SDL_GL_SwapBuffers();
 
     } while (!done);
-
-    //set_next_game_mode(mode_menu);
-    set_next_game_mode(mode_normal_exit);
 }
 
 // ----------------------------------------------------------------------------
 
-int main(int argc, char **argv) {
-    // Initial state
-    set_next_game_mode(mode_logo);
-
-    // Don't let fatal_error point to a random memory location
-    fatal_error = "no fatal error defined";
-
-    init_screen(&argc, argv);
-
+int main(int argc, char *argv[]) {
+    video_init(SCREEN_WIDTH, SCREEN_HEIGHT);
     Game game;
-
-    for(;;) {
-        logf("next_game_mode == %d", next_game_mode);
-        switch (next_game_mode) {
-            case mode_normal_exit:
-                return 0;
-            case mode_fatal_error:
-                error();
-                return 1;
-            case mode_game:
-                game_loop(game);
-                break;
-            case mode_logo:
-                logo_loop();
-                break;
-            case mode_menu:
-                menu_loop();
-                break;
-            default:
-                logf("Mode not handled: %d", next_game_mode);
-                return 0;
-        }
-    }
-
+    game_loop(game);
     return 0;
 }
