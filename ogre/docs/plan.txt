@@ -1,0 +1,36 @@
+=== Technologies ===
+
+ * Graphics: Ogre3D (OpenGL, DirectX)
+ * GUI: CEGUI / none
+ * Sound: Ogre SoundManager
+ * Input: OIS
+ * Scripting: Lua
+ * Networking: Zoidcom
+ * Physics: ODE
+
+=== Maps ===
+
+ * 3D
+ * skybox
+ * map is a 3D surface (nurb / mesh / whatever) loaded from a heightmap
+ * vertices have heights
+ * interpolate height between verticies
+ * need measurement of flatness => fitness for building
+ * map borders like Medieval II
+ * textures on surface, based on terrain types + skin (decals?)
+ * aim to look like SNES Populous w/ the mouse skin => bright and cute
+ * viewports: 2 options: first person (from bldg) + isometricish 3rd person
+ * water effect, splashes
+
+=== Objects ===
+
+ * buildings (incl the little joining lighting strip buildings, and floating buildings like balloons)
+ * projectiles
+ * x,y,z (z = height above ground, x/y = cart coords)
+
+=== Networking ===
+
+ * Zoidcom
+ * processing done on server
+ * clients animate pretty send moves to server
+ * could still cheat via bots but meh
