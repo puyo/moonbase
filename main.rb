@@ -61,17 +61,45 @@ module Moonbase
 
     attr_accessor :vx, :vy
 
-    def vy=(y)
-      @vy = y
-      p y
-    end
-
     def initialize(map)
+      super()
       @vx, @vy = 0, 0
       @scroll_x = 0
       @scroll_y = 0
-      @tile_size = 16
+      @tile_size = 32
       @map = map
+
+      width = 50 #@map.width
+      height = 50 #@map.height
+      g = @tile_size
+      gh = g/2
+
+      pix_w = (width + height)*g
+      pix_h = (width + height)*gh
+      @image = Surface.new([pix_w, pix_h], 0, Surface::HWSURFACE)
+      @image.colorkey = [0, 0, 0]
+      @image.to_display_alpha
+
+      (0...width).each do |i|
+        (0...height).each do |j|
+          px = i.to_f / width
+          py = j.to_f / height
+          sx = (i + j) * g
+          sy = (height - 1 + i - j) * gh
+
+          # iso tile outline
+          points = [
+            [sx + g  , sy     ], # top
+            [sx      , sy + gh], # left
+            [sx + g  , sy + g ], # bottom
+            [sx + 2*g, sy + gh], # right
+          ]
+          @image.draw_polygon_s(points, [px*255, 255, py*255])
+          @image.draw_polygon(points, [255, 255, 255])
+        end
+      end
+
+      update_rect
 
       make_magic_hooks({
         Moonbase.pressed(:up   )  => proc { |owner, event| owner.vy = -1 },
@@ -82,51 +110,17 @@ module Moonbase
         Moonbase.released(:down ) => proc { |owner, event| owner.vy = 0 },
         Moonbase.released(:left ) => proc { |owner, event| owner.vx = 0 },
         Moonbase.released(:right) => proc { |owner, event| owner.vx = 0 },
-
-        :tick => :on_tick,
-        Events::DrawSprites => :on_draw,
-        Events::UndrawSprites => :on_undraw,
       })
-
-      @image = Surface.new([100, 100])
-
-      (0..@map.width).each do |i|
-        (0..@map.height).each do |j|
-          px = i.to_f / @map.width
-          py = j.to_f / @map.height
-          g = 16
-          gh = 8
-          sx = (i + j) * g
-          sy = (i - j) * gh
-          ## + w*gh
-          @image.draw_line([sx + g, sy],        [sx, sy + gh],       [px*255,py*255,255])
-          @image.draw_line([sx, sy + gh],       [sx + g, sy + g],    [px*255,py*255,255])
-          @image.draw_line([sx + g, sy + g],    [sx + 2*g, sy + gh], [px*255,py*255,255])
-          @image.draw_line([sx + 2*g, sy + gh], [sx + g, sy],        [px*255,py*255,255])
-        end
-      end
     end
 
-    def rect
-      r = @image.make_rect
-      r.x = @scroll_x
-      r.y = @scroll_y
-      r
+    def update(event)
+      @scroll_x -= 500*event.seconds*@vx
+      @scroll_y -= 500*event.seconds*@vy
+      update_rect
     end
 
-    def on_tick(tick_event)
-      @scroll_x += @vx
-      @scroll_y += @vy
-    end
-
-    def on_draw(event)
-      dirty_rects = draw(event.screen)
-      event.screen.update
-      #event.screen.update_rects(dirty_rects)
-    end
-
-    def on_undraw(event)
-      undraw(event.screen, event.background)
+    def update_rect
+      @rect = Rect.new(@scroll_x, @scroll_y, *@image.size)
     end
   end
 
@@ -134,9 +128,28 @@ module Moonbase
     def initialize(main, game)
       @game = game
       @map_view = MapView.new(@game.map)
-      main.append_hook(:owner => @map_view, 
-                       :trigger => EventTriggers::YesTrigger.new, 
-                       :action  => EventActions::MethodAction.new(:handle))
+
+      grp = Sprites::Group.new
+      grp.extend(Sprites::UpdateGroup)
+      grp.push(@map_view)
+
+      class << grp
+        include EventHandler::HasEventHandler
+        def on_draw(event)
+          dirty_rects = draw(event.screen)
+          event.screen.update_rects(dirty_rects)
+        end
+        def on_undraw(event)
+          #undraw(event.screen, event.background)
+        end
+      end
+
+      grp.make_magic_hooks({
+        :tick         => :update,
+        Moonbase::Events::DrawSprites   => :on_draw,
+        Moonbase::Events::UndrawSprites => :on_undraw,
+      })
+      main.register(grp, @map_view)
     end
   end
 
@@ -209,6 +222,14 @@ module Moonbase
         Kernel.loop do
           step
         end
+      end
+    end
+
+    def register( *objects )
+      objects.each do |object|
+        append_hook( :owner   => object,
+                    :trigger => Rubygame::EventTriggers::YesTrigger.new,
+                    :action  => Rubygame::EventActions::MethodAction.new(:handle) )
       end
     end
   end
