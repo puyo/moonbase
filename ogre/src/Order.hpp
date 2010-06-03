@@ -1,7 +1,6 @@
 #ifndef __Order_inc__
 #define __Order_inc__
 
-#include <boost/signals.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace Moonbase {

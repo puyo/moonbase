@@ -1,13 +1,12 @@
 #ifndef __Map_inc__
 #define __Map_inc__
 
-#include <boost/signals.hpp>
 #include <vector>
 #include <string>
 
 namespace Moonbase {
 
-    class Map : public boost::signals::trackable {
+    class Map {
         public:
             typedef float Height;
             typedef float Coord;

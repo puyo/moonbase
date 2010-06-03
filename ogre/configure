@@ -598,15 +598,11 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-BOOST_SIGNALS_LIBS
 OGRE_LIBS
 OGRE_CFLAGS
-OIS_LIBS
-OIS_CFLAGS
-PKG_CONFIG
-ILU_LIBS
-IL_LIBS
 ODE_LIBS
+ODE_CFLAGS
+PKG_CONFIG
 M_LIBS
 EGREP
 GREP
@@ -726,8 +722,8 @@ CCC
 CPP
 CXXCPP
 PKG_CONFIG
-OIS_CFLAGS
-OIS_LIBS
+ODE_CFLAGS
+ODE_LIBS
 OGRE_CFLAGS
 OGRE_LIBS'
 
@@ -1366,8 +1362,8 @@ Some influential environment variables:
   CPP         C preprocessor
   CXXCPP      C++ preprocessor
   PKG_CONFIG  path to pkg-config utility
-  OIS_CFLAGS  C compiler flags for OIS, overriding pkg-config
-  OIS_LIBS    linker flags for OIS, overriding pkg-config
+  ODE_CFLAGS  C compiler flags for ODE, overriding pkg-config
+  ODE_LIBS    linker flags for ODE, overriding pkg-config
   OGRE_CFLAGS C compiler flags for OGRE, overriding pkg-config
   OGRE_LIBS   linker flags for OGRE, overriding pkg-config
 
@@ -4749,158 +4745,6 @@ fi
 # -----------------------------------------------
 # ODE (Open Dynamics Engine)
 
-for ac_header in ode/ode.h
-do :
-  ac_fn_cxx_check_header_mongrel "$LINENO" "ode/ode.h" "ac_cv_header_ode_ode_h" "$ac_includes_default"
-if test "x$ac_cv_header_ode_ode_h" = x""yes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_ODE_ODE_H 1
-_ACEOF
-
-fi
-
-done
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dWorldStep in -lode" >&5
-$as_echo_n "checking for dWorldStep in -lode... " >&6; }
-if test "${ac_cv_lib_ode_dWorldStep+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lode  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char dWorldStep ();
-int
-main ()
-{
-return dWorldStep ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_ode_dWorldStep=yes
-else
-  ac_cv_lib_ode_dWorldStep=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ode_dWorldStep" >&5
-$as_echo "$ac_cv_lib_ode_dWorldStep" >&6; }
-if test "x$ac_cv_lib_ode_dWorldStep" = x""yes; then :
-  ODE_LIBS="-lode"
-else
-  as_fn_error "
-              *** Could not find ODE.
-              " "$LINENO" 5
-fi
-
-
-
-# -----------------------------------------------
-# DevIL Image Library
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ilInit in -lIL" >&5
-$as_echo_n "checking for ilInit in -lIL... " >&6; }
-if test "${ac_cv_lib_IL_ilInit+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lIL  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char ilInit ();
-int
-main ()
-{
-return ilInit ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_IL_ilInit=yes
-else
-  ac_cv_lib_IL_ilInit=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_IL_ilInit" >&5
-$as_echo "$ac_cv_lib_IL_ilInit" >&6; }
-if test "x$ac_cv_lib_IL_ilInit" = x""yes; then :
-  IL_LIBS="-lIL"
-else
-  as_fn_error "*** Could not find DevIL. Get it at http://openil.sourceforge.net/." "$LINENO" 5
-fi
-
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for iluFlipImage in -lILU" >&5
-$as_echo_n "checking for iluFlipImage in -lILU... " >&6; }
-if test "${ac_cv_lib_ILU_iluFlipImage+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lILU  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char iluFlipImage ();
-int
-main ()
-{
-return iluFlipImage ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_ILU_iluFlipImage=yes
-else
-  ac_cv_lib_ILU_iluFlipImage=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ILU_iluFlipImage" >&5
-$as_echo "$ac_cv_lib_ILU_iluFlipImage" >&6; }
-if test "x$ac_cv_lib_ILU_iluFlipImage" = x""yes; then :
-  ILU_LIBS="-lILU"
-else
-  as_fn_error "*** Could not find DevIL. Get it at http://openil.sourceforge.net/." "$LINENO" 5
-fi
-
-
-
-# -----------------------------------------------
-# OIS
-
 
 
 if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
@@ -5019,44 +4863,40 @@ $as_echo "no" >&6; }
 fi
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for OIS" >&5
-$as_echo_n "checking for OIS... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ODE" >&5
+$as_echo_n "checking for ODE... " >&6; }
 
-if test -n "$PKG_CONFIG"; then
-    if test -n "$OIS_CFLAGS"; then
-        pkg_cv_OIS_CFLAGS="$OIS_CFLAGS"
-    else
-        if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"OIS >= 1.0.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "OIS >= 1.0.0") 2>&5
+if test -n "$ODE_CFLAGS"; then
+    pkg_cv_ODE_CFLAGS="$ODE_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"ode >= 0.11\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "ode >= 0.11") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_OIS_CFLAGS=`$PKG_CONFIG --cflags "OIS >= 1.0.0" 2>/dev/null`
+  pkg_cv_ODE_CFLAGS=`$PKG_CONFIG --cflags "ode >= 0.11" 2>/dev/null`
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
-if test -n "$PKG_CONFIG"; then
-    if test -n "$OIS_LIBS"; then
-        pkg_cv_OIS_LIBS="$OIS_LIBS"
-    else
-        if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"OIS >= 1.0.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "OIS >= 1.0.0") 2>&5
+if test -n "$ODE_LIBS"; then
+    pkg_cv_ODE_LIBS="$ODE_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"ode >= 0.11\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "ode >= 0.11") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_OIS_LIBS=`$PKG_CONFIG --libs "OIS >= 1.0.0" 2>/dev/null`
+  pkg_cv_ODE_LIBS=`$PKG_CONFIG --libs "ode >= 0.11" 2>/dev/null`
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
 
 
@@ -5069,75 +4909,86 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        OIS_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "OIS >= 1.0.0"`
+	        ODE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "ode >= 0.11" 2>&1`
         else
-	        OIS_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "OIS >= 1.0.0"`
+	        ODE_PKG_ERRORS=`$PKG_CONFIG --print-errors "ode >= 0.11" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$OIS_PKG_ERRORS" >&5
+	echo "$ODE_PKG_ERRORS" >&5
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-                as_fn_error "
-*** Couldn't find OIS or tests failed:
-*** $OIS_PKG_ERRORS
+	as_fn_error "Package requirements (ode >= 0.11) were not met:
+
+$ODE_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables ODE_CFLAGS
+and ODE_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
 " "$LINENO" 5
 elif test $pkg_failed = untried; then
-	as_fn_error "
-*** Couldn't find OIS or tests failed:
-*** $OIS_PKG_ERRORS
-" "$LINENO" 5
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables ODE_CFLAGS
+and ODE_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details." "$LINENO" 5; }
 else
-	OIS_CFLAGS=$pkg_cv_OIS_CFLAGS
-	OIS_LIBS=$pkg_cv_OIS_LIBS
+	ODE_CFLAGS=$pkg_cv_ODE_CFLAGS
+	ODE_LIBS=$pkg_cv_ODE_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 	:
 fi
 
+
+
 # -----------------------------------------------
-# Ogre3D
+# OGRE
 
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OGRE" >&5
 $as_echo_n "checking for OGRE... " >&6; }
 
-if test -n "$PKG_CONFIG"; then
-    if test -n "$OGRE_CFLAGS"; then
-        pkg_cv_OGRE_CFLAGS="$OGRE_CFLAGS"
-    else
-        if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"OGRE\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "OGRE") 2>&5
+if test -n "$OGRE_CFLAGS"; then
+    pkg_cv_OGRE_CFLAGS="$OGRE_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"OGRE >= 1.7\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "OGRE >= 1.7") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_OGRE_CFLAGS=`$PKG_CONFIG --cflags "OGRE" 2>/dev/null`
+  pkg_cv_OGRE_CFLAGS=`$PKG_CONFIG --cflags "OGRE >= 1.7" 2>/dev/null`
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
-if test -n "$PKG_CONFIG"; then
-    if test -n "$OGRE_LIBS"; then
-        pkg_cv_OGRE_LIBS="$OGRE_LIBS"
-    else
-        if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"OGRE\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "OGRE") 2>&5
+if test -n "$OGRE_LIBS"; then
+    pkg_cv_OGRE_LIBS="$OGRE_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"OGRE >= 1.7\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "OGRE >= 1.7") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_OGRE_LIBS=`$PKG_CONFIG --libs "OGRE" 2>/dev/null`
+  pkg_cv_OGRE_LIBS=`$PKG_CONFIG --libs "OGRE >= 1.7" 2>/dev/null`
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
 
 
@@ -5150,14 +5001,14 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        OGRE_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "OGRE"`
+	        OGRE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "OGRE >= 1.7" 2>&1`
         else
-	        OGRE_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "OGRE"`
+	        OGRE_PKG_ERRORS=`$PKG_CONFIG --print-errors "OGRE >= 1.7" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$OGRE_PKG_ERRORS" >&5
 
-	as_fn_error "Package requirements (OGRE) were not met:
+	as_fn_error "Package requirements (OGRE >= 1.7) were not met:
 
 $OGRE_PKG_ERRORS
 
@@ -5191,48 +5042,31 @@ fi
 
 
 
+# -----------------------------------------------
+# OIS
+
+#PKG_CHECK_MODULES(OIS, [OIS >= 1.0])
+#AC_SUBST(OIS_CFLAGS)
+#AC_SUBST(OIS_LIBS)
+
 # -------------------------------------------
 # Boost
 
-for ac_header in boost/version.hpp
-do :
-  ac_fn_cxx_check_header_mongrel "$LINENO" "boost/version.hpp" "ac_cv_header_boost_version_hpp" "$ac_includes_default"
-if test "x$ac_cv_header_boost_version_hpp" = x""yes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_BOOST_VERSION_HPP 1
-_ACEOF
-
-else
-  as_fn_error "
-    *** Couldn't find Boost." "$LINENO" 5
-fi
-
-done
-
-
-#AC_CHECK_LIB(boost_signals, ,
+#AC_CHECK_HEADERS([boost/version.hpp],
     #[],
-    #[AC_MSG_ERROR([*** Could not find Boost.Signals library.])])
+    #[AC_MSG_ERROR([
+    #*** Couldn't find Boost.])])
 
 # -------------------------------------------
 # Boost.Signals
 
-for ac_header in boost/signal.hpp
-do :
-  ac_fn_cxx_check_header_mongrel "$LINENO" "boost/signal.hpp" "ac_cv_header_boost_signal_hpp" "$ac_includes_default"
-if test "x$ac_cv_header_boost_signal_hpp" = x""yes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_BOOST_SIGNAL_HPP 1
-_ACEOF
- BOOST_SIGNALS_LIBS="-lboost_signals"
-else
-  as_fn_error "
-    *** Couldn't find Boost.Signals." "$LINENO" 5
-fi
+#AX_BOOST_BASE
 
-done
-
-
+#AC_CHECK_HEADERS([boost/signal.hpp],
+    #[BOOST_SIGNALS_LIBS="-lboost_signals"],
+    #[AC_MSG_ERROR([
+    #*** Couldn't find Boost.Signals.])])
+#AC_SUBST(BOOST_SIGNALS_LIBS)
 
 # -----------------------------------------------
 # Headers

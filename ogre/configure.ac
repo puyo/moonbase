@@ -42,64 +42,42 @@ AC_SUBST(M_LIBS)
 # -----------------------------------------------
 # ODE (Open Dynamics Engine)
 
-AC_CHECK_HEADERS(ode/ode.h)
-AC_CHECK_LIB(ode, [dWorldStep],
-             [ODE_LIBS="-lode"],
-             [AC_MSG_ERROR([
-              *** Could not find ODE.
-              ])])
+PKG_CHECK_MODULES(ODE, [ode >= 0.11])
+AC_SUBST(ODE_CFLAGS)
 AC_SUBST(ODE_LIBS)
 
 # -----------------------------------------------
-# DevIL Image Library
+# OGRE
 
-AC_CHECK_LIB(IL, [ilInit],
-    [IL_LIBS="-lIL"],
-    [AC_MSG_ERROR([*** Could not find DevIL. Get it at http://openil.sourceforge.net/.])])
-AC_SUBST(IL_LIBS)
-
-AC_CHECK_LIB(ILU, [iluFlipImage],
-    [ILU_LIBS="-lILU"],
-    [AC_MSG_ERROR([*** Could not find DevIL. Get it at http://openil.sourceforge.net/.])])
-AC_SUBST(ILU_LIBS)
+PKG_CHECK_MODULES(OGRE, [OGRE >= 1.7])
+AC_SUBST(OGRE_CFLAGS)
+AC_SUBST(OGRE_LIBS)
 
 # -----------------------------------------------
 # OIS
 
-PKG_CHECK_MODULES(OIS, [OIS >= 1.0.0],
-    [],
-    [AC_MSG_ERROR([
-*** Couldn't find OIS or tests failed:
-*** $OIS_PKG_ERRORS
-])])
-
-# -----------------------------------------------
-# Ogre3D
-
-PKG_CHECK_MODULES(OGRE, OGRE)
-AC_SUBST(OGRE_CFLAGS)
-AC_SUBST(OGRE_LIBS)
+#PKG_CHECK_MODULES(OIS, [OIS >= 1.0])
+#AC_SUBST(OIS_CFLAGS)
+#AC_SUBST(OIS_LIBS)
 
 # -------------------------------------------
 # Boost
 
-AC_CHECK_HEADERS([boost/version.hpp],
-    [],
-    [AC_MSG_ERROR([
-    *** Couldn't find Boost.])])
-
-#AC_CHECK_LIB(boost_signals, ,
+#AC_CHECK_HEADERS([boost/version.hpp],
     #[],
-    #[AC_MSG_ERROR([*** Could not find Boost.Signals library.])])
+    #[AC_MSG_ERROR([
+    #*** Couldn't find Boost.])])
 
 # -------------------------------------------
 # Boost.Signals
 
-AC_CHECK_HEADERS([boost/signal.hpp],
-    [BOOST_SIGNALS_LIBS="-lboost_signals"],
-    [AC_MSG_ERROR([
-    *** Couldn't find Boost.Signals.])])
-AC_SUBST(BOOST_SIGNALS_LIBS)
+#AX_BOOST_BASE
+
+#AC_CHECK_HEADERS([boost/signal.hpp],
+    #[BOOST_SIGNALS_LIBS="-lboost_signals"],
+    #[AC_MSG_ERROR([
+    #*** Couldn't find Boost.Signals.])])
+#AC_SUBST(BOOST_SIGNALS_LIBS)
 
 # -----------------------------------------------
 # Headers

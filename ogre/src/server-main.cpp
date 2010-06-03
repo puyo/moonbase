@@ -1,4 +1,3 @@
-#include <boost/signal.hpp>
 #include <iostream>
 #include "Game.hpp"
 

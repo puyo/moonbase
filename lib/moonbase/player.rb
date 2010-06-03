@@ -17,6 +17,10 @@ module Moonbase
       game.set_order(self, SkipOrder.new)
     end
 
+    def random_order
+      ShootOrder.new(:from => myhub, :projectile_class => Bomb, :direction => 0, :power => 10)
+    end
+
     def on_turn_start(game)
       @energy += BASE_ENERGY_PER_TURN + extra_energy_per_turn(game)
     end

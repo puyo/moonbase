@@ -7,13 +7,12 @@
 #include "Player.hpp"
 #include "Building.hpp"
 #include "Order.hpp"
-#include <boost/signals.hpp>
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <queue>
 
 namespace Moonbase {
-    class Game : public boost::signals::trackable {
+    class Game {
         public:
             typedef float NumSeconds;
             typedef unsigned int NumTurns;
@@ -54,9 +53,6 @@ namespace Moonbase {
             BuildingMap mBuildings;
             OrdersMap mOrders; // max 1 order per player
             dWorldID mWorldId;
-        private:
-            boost::signal<void (Player&)> mYourTurn;
-            boost::signal<void ()> mRoundOver;
 
         friend class GameObject;
     };

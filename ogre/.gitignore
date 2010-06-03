@@ -6,3 +6,4 @@ config.h
 stamp-h1
 moonbase
 moonbased
+autom4te.cache

@@ -1,7 +1,7 @@
 #ifndef __Player_inc__
 #define __Player_inc__
 
-#include <boost/signals.hpp>
+#include <string>
 #include <boost/shared_ptr.hpp>
 
 namespace Moonbase {

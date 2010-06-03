@@ -1,15 +1,13 @@
 require 'moonbase/player'
 require 'moonbase/buildings'
-require 'moonbase/wind'
 
 module Moonbase
   class Map
-    attr_reader :width, :height, :wind
+    attr_reader :width, :height
 
     def initialize(opts = {})
-      @width = opts[:width] || 100.0
-      @height = opts[:height] || 100.0
-      @wind = Wind.new(:direction => 0, :force => 0)
+      @width = opts[:width] || 100
+      @height = opts[:height] || 100
     end
   end
 end

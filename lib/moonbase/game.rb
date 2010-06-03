@@ -7,7 +7,7 @@ module Moonbase
     class Options
     end
 
-    attr_reader :players, :phase, :buildings, :projectiles
+    attr_reader :map, :players, :phase, :buildings, :projectiles
 
     def initialize(opts = {})
       @opts = opts
@@ -22,8 +22,7 @@ module Moonbase
     def setup
       # predefined for now
       @map = Map.new(:width => 100.0,
-                     :height => 100.0,
-                     :wind => Wind.new)
+                     :height => 100.0)
       h1 = Hub.new(:position => Vector3D.new(0, 0, 0))
       h2 = Hub.new(:position => Vector3D.new(50, 50, 0))
       add_building(players[0], h1)

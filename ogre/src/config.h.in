@@ -3,12 +3,6 @@
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
-/* Define to 1 if you have the <boost/signal.hpp> header file. */
-#undef HAVE_BOOST_SIGNAL_HPP
-
-/* Define to 1 if you have the <boost/version.hpp> header file. */
-#undef HAVE_BOOST_VERSION_HPP
-
 /* Define to 1 if you have the <float.h> header file. */
 #undef HAVE_FLOAT_H
 
@@ -23,9 +17,6 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the <ode/ode.h> header file. */
-#undef HAVE_ODE_ODE_H
 
 /* Define to 1 if you have the <stdbool.h> header file. */
 #undef HAVE_STDBOOL_H
