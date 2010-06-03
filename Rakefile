@@ -20,3 +20,8 @@ RCov::VerifyTask.new(:rcov => :spec) do |t|
   t.threshold = 100.0
   t.require_exact_threshold = false
 end
+
+desc "Run the game"
+task :run do
+  system('rsdl main.rb') or system('ruby main.rb')
+end
