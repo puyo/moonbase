@@ -9,43 +9,15 @@ module Moonbase
     def initialize
       create_game
       create_map_view
-      create_map_view_pressed_hooks
-      create_map_view_released_hooks
       create_map_view_sprite_group
+      create_pressed_hooks
+      create_released_hooks
     end
+
+    private
 
     def create_map_view
       @map_view = MapView.new(@game.map)
-    end
-
-    def create_map_view_pressed_hooks
-      @map_view.make_magic_hooks({
-        :up    => map_scroll_y(-1),
-        :down  => map_scroll_y( 1),
-        :left  => map_scroll_x(-1),
-        :right => map_scroll_x( 1),
-      })
-    end
-
-    def create_map_view_released_hooks
-      @map_view.make_magic_hooks({
-        Moonbase::Events.released(:up   ) => map_scroll_y( 1),
-        Moonbase::Events.released(:down ) => map_scroll_y(-1),
-        Moonbase::Events.released(:left ) => map_scroll_x( 1),
-        Moonbase::Events.released(:right) => map_scroll_x(-1),
-      })
-    end
-
-    def map_scroll_x(dx)
-      proc do |view, event|
-        view.vx += dx
-      end
-    end
-
-    def map_scroll_y(dy)
-      proc do |view, event|
-        view.vy += dy
-      end
     end
 
     def create_map_view_sprite_group
@@ -67,21 +39,43 @@ module Moonbase
         Moonbase::Events::UndrawSprites => :on_undraw,
         :tick => :update,
       })
-      register(grp, @map_view)
+      add_sprite_hooks(grp)
     end
 
+    def create_pressed_hooks
+      make_magic_hooks({
+        :up    => map_scroll_hook(:vy, -1),
+        :down  => map_scroll_hook(:vy,  1),
+        :left  => map_scroll_hook(:vx, -1),
+        :right => map_scroll_hook(:vx,  1),
+      })
+    end
+
+    def create_released_hooks
+      make_magic_hooks({
+        Moonbase::Events.released(:up   ) => map_scroll_hook(:vy,  1),
+        Moonbase::Events.released(:down ) => map_scroll_hook(:vy, -1),
+        Moonbase::Events.released(:left ) => map_scroll_hook(:vx,  1),
+        Moonbase::Events.released(:right) => map_scroll_hook(:vx, -1),
+      })
+    end
+
+    def map_scroll_hook(coord, diff)
+      proc { @map_view.send("#{coord}=", @map_view.send(coord) + diff) }
+    end
+
+
     def create_game
-      @game = create_game_demo
+      @game = game_demo
       @game.buildings.each do |player, list|
         list.each do |building|
           p [player, building]
           #@building_views.push(BuildingView.new(:building => building, :owner => player))
         end
       end
-      @game_view = GameView.new(@game)
     end
 
-    def create_game_demo
+    def game_demo
       players = [
         Moonbase::Player.new(:name => 'P1'),
         Moonbase::Player.new(:name => 'P2'),
@@ -94,15 +88,13 @@ module Moonbase
       Game.new(:map => map, :players => players)
     end
 
-
     def on_building_create(building)
     end
 
     def on_projectile_create(projectile)
     end
 
-    # TODO: WTF does this do?
-    def register(*objects)
+    def add_sprite_hooks(*objects)
       objects.each do |object|
         append_hook :owner => object,
           :trigger => Rubygame::EventTriggers::YesTrigger.new,
