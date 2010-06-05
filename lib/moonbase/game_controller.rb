@@ -1,5 +1,4 @@
 require 'moonbase/game'
-require 'moonbase/game_view'
 require 'moonbase/map_view'
 
 module Moonbase
