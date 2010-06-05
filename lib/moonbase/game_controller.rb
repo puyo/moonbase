@@ -9,28 +9,43 @@ module Moonbase
     def initialize
       create_game
       create_map_view
+      create_map_view_pressed_hooks
+      create_map_view_released_hooks
       create_map_view_sprite_group
-    end
-
-    def map_scroll_hook(dx, dy)
-      proc do |view, event|
-        view.vx, view.vy = dx, dy
-      end
     end
 
     def create_map_view
       @map_view = MapView.new(@game.map)
-      stop = map_scroll_hook(0, 0)
+    end
+
+    def create_map_view_pressed_hooks
       @map_view.make_magic_hooks({
-        :up    => map_scroll_hook( 0, -1),
-        :down  => map_scroll_hook( 0,  1),
-        :left  => map_scroll_hook(-1,  0),
-        :right => map_scroll_hook( 1,  0),
-        Moonbase::Events.released(:up   ) => stop,
-        Moonbase::Events.released(:down ) => stop,
-        Moonbase::Events.released(:left ) => stop,
-        Moonbase::Events.released(:right) => stop,
+        :up    => map_scroll_y(-1),
+        :down  => map_scroll_y( 1),
+        :left  => map_scroll_x(-1),
+        :right => map_scroll_x( 1),
       })
+    end
+
+    def create_map_view_released_hooks
+      @map_view.make_magic_hooks({
+        Moonbase::Events.released(:up   ) => map_scroll_y( 1),
+        Moonbase::Events.released(:down ) => map_scroll_y(-1),
+        Moonbase::Events.released(:left ) => map_scroll_x( 1),
+        Moonbase::Events.released(:right) => map_scroll_x(-1),
+      })
+    end
+
+    def map_scroll_x(dx)
+      proc do |view, event|
+        view.vx += dx
+      end
+    end
+
+    def map_scroll_y(dy)
+      proc do |view, event|
+        view.vy += dy
+      end
     end
 
     def create_map_view_sprite_group
