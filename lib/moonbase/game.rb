@@ -21,8 +21,7 @@ module Moonbase
 
     def setup
       # predefined for now
-      @map = Map.new(:width => 100.0,
-                     :height => 100.0)
+      @map = Map.new(:width => 100, :height => 100)
       h1 = Hub.new(:position => Vector3D.new(0, 0, 0))
       h2 = Hub.new(:position => Vector3D.new(50, 50, 0))
       add_building(players[0], h1)
