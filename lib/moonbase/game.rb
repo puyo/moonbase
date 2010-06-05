@@ -3,29 +3,28 @@ require 'moonbase/order'
 require 'moonbase/vector3d'
 
 module Moonbase
-  class Game
-    class Options
-    end
+  def self.hash_of_arrays
+    Hash.new {|h, k| h[k] = [] }
+  end
 
+  class Game
     attr_reader :map, :players, :phase, :buildings, :projectiles
 
     def initialize(opts = {})
-      @opts = opts
-      @players = opts[:players] || raise('Must specify players for game')
-      @buildings = Hash.new {|h, k| h[k] = [] }
-      @projectiles = Hash.new {|h, k| h[k] = [] }
-      @map = opts[:map] || raise('Must specify map')
+      @buildings = Moonbase.hash_of_arrays
+      @projectiles = Moonbase.hash_of_arrays
       @orders = {}
       @phase = :orders
+      @players = opts[:players] || raise(ArgumentError, 'players required')
+      @map = opts[:map] || raise(ArgumentError, 'map required')
     end
 
     def tick
-      case @phase
-      when :orders then tick_orders
-      when :move then tick_move
-      when :quit then return false
+      if @phase == :orders
+        tick_orders
+      elsif @phase == :move
+        tick_move
       end
-      return true
     end
 
     def tick_move
@@ -43,9 +42,8 @@ module Moonbase
     def tick_orders
       #puts 'tick_orders'
       @players.each do |p| 
-        if order = p.request_order(self)
-          set_order(p, order)
-        end
+        order = p.request_order(self)
+        set_order(p, order) if order
       end
       if not awaiting_orders?
         @phase = :move
@@ -62,10 +60,6 @@ module Moonbase
 
     def awaiting_orders?
       @orders.size < @players.size
-    end
-
-    def add_building(player, building)
-      @buildings[player].push(building)
     end
 
     def add_projectile(player, projectile)

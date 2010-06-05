@@ -12,7 +12,7 @@ module Moonbase
 
       @image = Surface.new([32, 32], 0, Surface::HWSURFACE)
       @image.colorkey = [0, 0, 0]
-      @image.to_display_alpha
+      @image.to_display_alpha rescue nil
 
       @image.draw_circle(16, 16, 16, [255, 255, 255])
       @rect = Rect.new(@building.position.x, @building.position.y, *@image.size)

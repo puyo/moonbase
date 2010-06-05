@@ -13,38 +13,12 @@ module Moonbase
       @scroll_x = -500
       @scroll_y = -500
       @tile_size = 32
+      @g = @tile_size
+      @gh = @tile_size/2
       @map = map
 
-      width = 50 #@map.width
-      height = 50 #@map.height
-      g = @tile_size
-      gh = g/2
-
-      pix_w = (width + height)*g
-      pix_h = (width + height)*gh
-      @image = Surface.new([pix_w, pix_h], 0, Surface::HWSURFACE)
-      @image.colorkey = [0, 0, 0]
-      @image.to_display_alpha
-
-      (0...width).each do |i|
-        (0...height).each do |j|
-          px = i.to_f / width
-          py = j.to_f / height
-          sx = (i + j) * g
-          sy = (height - 1 + i - j) * gh
-
-          # iso tile outline
-          points = [
-            [sx + g  , sy     ], # top
-            [sx      , sy + gh], # left
-            [sx + g  , sy + g ], # bottom
-            [sx + 2*g, sy + gh], # right
-          ]
-          @image.draw_polygon_s(points, [px*255, 255, py*255])
-          @image.draw_polygon(points, [255, 255, 255])
-        end
-      end
-
+      create_image
+      draw_iso_tiles
       update_rect
     end
 
@@ -52,6 +26,55 @@ module Moonbase
       @scroll_x -= 500*event.seconds*@vx
       @scroll_y -= 500*event.seconds*@vy
       update_rect
+    end
+
+    private
+
+    def width; 50 end
+    def height; 50 end
+
+    def create_image
+      @image = Surface.new([(width + height)*@g, (width + height)*@gh], 
+                           0, Surface::HWSURFACE)
+      @image.colorkey = [0, 0, 0]
+      @image.to_display_alpha rescue nil
+    end
+
+    def each_tile_coordinate
+      (0...width).each do |i|
+        (0...height).each do |j|
+          yield i, j
+        end
+      end
+    end
+
+    def draw_iso_tiles
+      each_tile_coordinate do |i, j|
+        draw_iso_tile(i, j)
+      end
+    end
+
+    def color(i, j)
+      px = i.to_f / width
+      py = j.to_f / height
+      [px*255, 255, py*255]
+    end
+
+    def draw_iso_tile(i, j)
+      sx = (i + j) * @g
+      sy = (height - 1 + i - j) * @gh
+      points = iso_tile_points(sx, sy)
+      @image.draw_polygon_s(points, color(i, j))
+      @image.draw_polygon(points, Color[:white])
+    end
+
+    def iso_tile_points(sx, sy)
+      points = [
+        [sx + @g  , sy      ], # top
+        [sx       , sy + @gh], # left
+        [sx + @g  , sy + @g ], # bottom
+        [sx + 2*@g, sy + @gh], # right
+      ]
     end
 
     def update_rect

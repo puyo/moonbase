@@ -14,11 +14,11 @@ module Moonbase
     end
 
     def request_order(game)
-      game.set_order(self, SkipOrder.new)
+      game.set_order(self, random_order)
     end
 
     def random_order
-      ShootOrder.new(:from => myhub, :projectile_class => Bomb, :direction => 0, :power => 10)
+      ShootOrder.new(:from => Vector3D.origin, :projectile_class => Bomb, :direction => 0, :power => 10)
     end
 
     def on_turn_start(game)

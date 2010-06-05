@@ -12,14 +12,14 @@ module Moonbase
     attr_reader :from, :projectile_class, :direction, :power
 
     def initialize(opts = {})
-      @from = opts[:from] || raise('Must specify which building to shoot from') # building
+      @from = opts[:from] || raise('Must specify coordinate to shoot from')
       @direction = opts[:direction] || raise('Must specify shoot direction')
       @projectile_class = opts[:projectile_class] || raise('Must specify projectile class to shoot')
       @power = opts[:power] || raise('Must specify shoot power')
     end
 
     def new_projectile
-      @projectile_class.new(:position => @from.position.dup,
+      @projectile_class.new(:position => @from.dup,
                             :velocity => Vector3D.new(10, 10, 20))
     end
 
