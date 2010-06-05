@@ -14,36 +14,10 @@ module Moonbase
       @players = opts[:players] || raise('Must specify players for game')
       @buildings = Hash.new {|h, k| h[k] = [] }
       @projectiles = Hash.new {|h, k| h[k] = [] }
-      @map = nil
+      @map = opts[:map] || raise('Must specify map')
       @orders = {}
       @phase = :orders
     end
-
-    def setup
-      # predefined for now
-      @map = Map.new(:width => 100, :height => 100)
-      h1 = Hub.new(:position => Vector3D.new(0, 0, 0))
-      h2 = Hub.new(:position => Vector3D.new(50, 50, 0))
-      add_building(players[0], h1)
-      add_building(players[1], h2)
-    end
-
-    # setup
-    # tick_orders
-    # tick_orders
-    # tick_orders
-    # set_order(2, <Order>)
-    # tick_orders
-    # tick_orders
-    # set_order(1, <Order>)
-    # process_orders
-    # process_order
-    # process_order
-    # tick_move
-    # tick_move
-    # tick_move
-    # tick_move
-    # tick_orders
 
     def tick
       case @phase

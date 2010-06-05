@@ -46,17 +46,6 @@ module Moonbase
       end
 
       update_rect
-
-      make_magic_hooks({
-        Moonbase::Events.pressed(:up   )  => proc { |owner, event| owner.vy = -1 },
-        Moonbase::Events.pressed(:down )  => proc { |owner, event| owner.vy =  1 },
-        Moonbase::Events.pressed(:left )  => proc { |owner, event| owner.vx = -1 },
-        Moonbase::Events.pressed(:right)  => proc { |owner, event| owner.vx =  1 },
-        Moonbase::Events.released(:up   ) => proc { |owner, event| owner.vy = 0 },
-        Moonbase::Events.released(:down ) => proc { |owner, event| owner.vy = 0 },
-        Moonbase::Events.released(:left ) => proc { |owner, event| owner.vx = 0 },
-        Moonbase::Events.released(:right) => proc { |owner, event| owner.vx = 0 },
-      })
     end
 
     def update(event)
