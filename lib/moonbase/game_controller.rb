@@ -17,8 +17,8 @@ module Moonbase
     private
 
     def create_sprite_group
-      @grp = Sprites::Group.new
-      class << @grp
+      @sprite_group = Sprites::Group.new
+      class << @sprite_group
         include EventHandler::HasEventHandler
         def on_draw(event)
           dirty_rects = draw(event.screen)
@@ -28,13 +28,13 @@ module Moonbase
           undraw(event.screen, event.background)
         end
       end
-      @grp.extend(Sprites::UpdateGroup)
-      @grp.make_magic_hooks({
+      @sprite_group.extend(Sprites::UpdateGroup)
+      @sprite_group.make_magic_hooks({
         Moonbase::Events::DrawSprites => :on_draw,
         Moonbase::Events::UndrawSprites => :on_undraw,
         :tick => :update,
       })
-      add_sprite_hooks(@grp)
+      add_sprite_hooks(@sprite_group)
     end
 
     def create_pressed_hooks
@@ -64,13 +64,6 @@ module Moonbase
       create_game_demo
     end
 
-    # game_controller.new_game
-    # game_controller.add_player
-    # game_controller.add_building
-    # game_controller.add_building
-    # game_controller.generate_map
-    # game_controller.start
-
     def create_game_demo
       p1 = Moonbase::Player.new(:name => 'P1')
       p2 = Moonbase::Player.new(:name => 'P2')
@@ -85,7 +78,7 @@ module Moonbase
     def set_map(map)
       @game.map = map
       @map_view = MapView.new(map)
-      @grp.push(@map_view)
+      @sprite_group.push(@map_view)
     end
 
     def add_player(player)
@@ -96,7 +89,7 @@ module Moonbase
       @game.add_building(building)
       view = BuildingView.new(building)
       @building_views[building] = view
-      @grp.push(view)
+      @sprite_group.push(view)
     end
 
     def on_projectile_create(projectile)
