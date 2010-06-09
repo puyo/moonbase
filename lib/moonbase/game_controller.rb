@@ -8,6 +8,15 @@ module Moonbase
 
     def initialize
       @building_views = Hash.new {|h, k| h[k] = [] }
+      create_sprite_group
+      create_game
+      create_pressed_hooks
+      create_released_hooks
+    end
+
+    private
+
+    def create_sprite_group
       @grp = Sprites::Group.new
       class << @grp
         include EventHandler::HasEventHandler
@@ -26,12 +35,7 @@ module Moonbase
         :tick => :update,
       })
       add_sprite_hooks(@grp)
-      create_game
-      create_pressed_hooks
-      create_released_hooks
     end
-
-    private
 
     def create_pressed_hooks
       make_magic_hooks({
@@ -74,7 +78,7 @@ module Moonbase
       add_player(p2)
       map = Map.new(:width => 100, :height => 100)
       set_map map
-      h1 = Hub.new(:position => map.coordinate_3d([500, 500]), :owner => p1)
+      h1 = Hub.new(:position => Map.coordinate_3d([500, 500]), :owner => p1)
       add_building(h1)
     end
     

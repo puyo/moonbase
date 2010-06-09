@@ -10,7 +10,7 @@ module Moonbase
       @height = opts[:height] || 100
     end
 
-    def coordinate_3d(xy)
+    def self.coordinate_3d(xy)
       Vector3D.new(xy[0], xy[1], 0) # flat
     end
   end
