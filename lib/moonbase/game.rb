@@ -14,9 +14,20 @@ module Moonbase
       @buildings = Moonbase.hash_of_arrays
       @projectiles = Moonbase.hash_of_arrays
       @orders = {}
+      @phase = :create
+      @players = []
+      @map = nil
+    end
+
+    def map=(map)
+      @map = map
+    end
+
+    def start
+      raise 'Players required' if @players.empty?
+      raise 'Buildings required' if @buildings.empty?
+      raise 'Map required' if @map.nil?
       @phase = :orders
-      @players = opts[:players] || raise(ArgumentError, 'players required')
-      @map = opts[:map] || raise(ArgumentError, 'map required')
     end
 
     def tick
@@ -62,8 +73,16 @@ module Moonbase
       @orders.size < @players.size
     end
 
-    def add_projectile(player, projectile)
-      @projectiles[player].push(projectile)
+    def add_player(player)
+      @players.push player
+    end
+
+    def add_building(building)
+      @buildings[building.owner] = building
+    end
+
+    def add_projectile(projectile)
+      @projectiles[projectile.owner].push(projectile)
     end
 
     def set_order(player, order)
@@ -72,6 +91,9 @@ module Moonbase
 
     def remove_player(player)
       @players.delete(player)
+      @orders.delete(player)
+      @projectiles.delete(player)
+      @buildings.delete(player)
       if @players.empty?
         @phase = :quit
       end

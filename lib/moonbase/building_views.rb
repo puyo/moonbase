@@ -5,16 +5,13 @@ module Moonbase
     include EventHandler::HasEventHandler
     include Sprites::Sprite
 
-    def initialize(opts)
+    def initialize(building)
       super()
-      @building = opts[:building]
-      #@colour => opts[:player].colour
-
+      @building = building
       @image = Surface.new([32, 32], 0, Surface::HWSURFACE)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha rescue nil
-
-      @image.draw_circle(16, 16, 16, [255, 255, 255])
+      @image.draw_circle_s([16, 16], 16, [255, 0, 255])
       @rect = Rect.new(@building.position.x, @building.position.y, *@image.size)
     end
 

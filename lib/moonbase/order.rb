@@ -18,13 +18,14 @@ module Moonbase
       @power = opts[:power] || raise('Must specify shoot power')
     end
 
-    def new_projectile
+    def new_projectile(owner)
       @projectile_class.new(:position => @from.dup,
-                            :velocity => Vector3D.new(10, 10, 20))
+                            :velocity => Vector3D.new(10, 10, 20),
+                            :owner => owner)
     end
 
     def process(game, player)
-      game.add_projectile(player, new_projectile)
+      game.add_projectile(new_projectile(player))
     end
   end
 

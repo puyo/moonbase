@@ -1,27 +1,15 @@
 require 'moonbase/game'
 require 'moonbase/map_view'
+require 'moonbase/building_views'
 
 module Moonbase
   class GameController
     include EventHandler::HasEventHandler
 
     def initialize
-      create_game
-      create_map_view
-      create_map_view_sprite_group
-      create_pressed_hooks
-      create_released_hooks
-    end
-
-    private
-
-    def create_map_view
-      @map_view = MapView.new(@game.map)
-    end
-
-    def create_map_view_sprite_group
-      grp = Sprites::Group.new
-      class << grp
+      @building_views = Hash.new {|h, k| h[k] = [] }
+      @grp = Sprites::Group.new
+      class << @grp
         include EventHandler::HasEventHandler
         def on_draw(event)
           dirty_rects = draw(event.screen)
@@ -31,15 +19,19 @@ module Moonbase
           undraw(event.screen, event.background)
         end
       end
-      grp.extend(Sprites::UpdateGroup)
-      grp.push(@map_view)
-      grp.make_magic_hooks({
+      @grp.extend(Sprites::UpdateGroup)
+      @grp.make_magic_hooks({
         Moonbase::Events::DrawSprites => :on_draw,
         Moonbase::Events::UndrawSprites => :on_undraw,
         :tick => :update,
       })
-      add_sprite_hooks(grp)
+      add_sprite_hooks(@grp)
+      create_game
+      create_pressed_hooks
+      create_released_hooks
     end
+
+    private
 
     def create_pressed_hooks
       make_magic_hooks({
@@ -63,31 +55,44 @@ module Moonbase
       proc { @map_view.send("#{coord}=", @map_view.send(coord) + diff) }
     end
 
-
     def create_game
-      @game = game_demo
-      @game.buildings.each do |player, list|
-        list.each do |building|
-          p [player, building]
-          #@building_views.push(BuildingView.new(:building => building, :owner => player))
-        end
-      end
+      @game = Game.new
+      create_game_demo
     end
 
-    def game_demo
-      players = [
-        Moonbase::Player.new(:name => 'P1'),
-        Moonbase::Player.new(:name => 'P2'),
-      ]
+    # game_controller.new_game
+    # game_controller.add_player
+    # game_controller.add_building
+    # game_controller.add_building
+    # game_controller.generate_map
+    # game_controller.start
+
+    def create_game_demo
+      p1 = Moonbase::Player.new(:name => 'P1')
+      p2 = Moonbase::Player.new(:name => 'P2')
+      add_player(p1)
+      add_player(p2)
       map = Map.new(:width => 100, :height => 100)
-      #h1 = Hub.new(:owner => players[0], :position => Vector3D.new(0, 0, 0))
-      #h2 = Hub.new(:owner => players[1], :position => Vector3D.new(50, 50, 0))
-      #create_building(h1)
-      #create_building(h2)
-      Game.new(:map => map, :players => players)
+      set_map map
+      h1 = Hub.new(:position => map.coordinate_3d([500, 500]), :owner => p1)
+      add_building(h1)
+    end
+    
+    def set_map(map)
+      @game.map = map
+      @map_view = MapView.new(map)
+      @grp.push(@map_view)
     end
 
-    def on_building_create(building)
+    def add_player(player)
+      @game.add_player(player)
+    end
+
+    def add_building(building)
+      @game.add_building(building)
+      view = BuildingView.new(building)
+      @building_views[building] = view
+      @grp.push(view)
     end
 
     def on_projectile_create(projectile)

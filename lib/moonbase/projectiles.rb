@@ -1,10 +1,11 @@
 module Moonbase
   class Projectile
-    attr_reader :position, :velocity
+    attr_reader :position, :velocity, :owner
 
     def initialize(opts = {})
       @position = opts[:position] || raise('Must specify projectile position')
       @velocity = opts[:velocity] || raise('Must specify projectile velocity')
+      @owner = opts[:owner] || raise('Must specify projectile owner')
     end
 
     def tick(game)
