@@ -32,9 +32,13 @@ namespace :test do
     t.require_exact_threshold = false
   end
 
-  require 'roodi'
-  require 'roodi_task'
-  RoodiTask.new(:roodi, CODE)
+  begin
+    require 'roodi'
+    require 'roodi_task'
+    RoodiTask.new(:roodi, CODE)
+  rescue Exception
+    # no roodi installed :-(
+  end
 
   desc 'Analyze for code complexity'
   task :flog do
