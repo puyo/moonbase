@@ -13,6 +13,31 @@ task :run do
   system('rsdl main.rb') or system('ruby main.rb')
 end
 
+namespace :setup do
+  namespace :linux do
+    task :runtime do
+      sh 'apt-get install -y libsdl1.2-debian libsdl-gfx1.2-4 libsdl-image1.2 libsdl-ttf2.0-0'
+    end
+  end
+
+  namespace :darwin10 do
+    task :runtime do
+      sh 'port install ruby rb-rubygems libsdl libsdl_gfx libsdl_image libsdl_ttf'
+      sh 'gem install rsdl --no-ri --no-rdoc'
+    end
+  end
+
+  desc 'Install runtime deps (sudo required)'
+  task :runtime => "#{Config::CONFIG['target_os']}:runtime" do
+    sh 'gem install rubygame --no-ri --no-rdoc'
+  end
+
+  desc 'Install build deps (sudo required)'
+  task :build => :runtime do
+    sh 'gem install rake rspec rcov roodi flog flay --no-ri --no-rdoc'
+  end
+end
+
 namespace :test do
   require 'spec/rake/spectask'
   spec_opts = %w[--colour --format progress]
