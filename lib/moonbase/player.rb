@@ -6,10 +6,11 @@ module Moonbase
     START_ENERGY = 11
     BASE_ENERGY_PER_TURN = 7
 
-    attr_reader :name, :energy
+    attr_reader :name, :energy, :color
 
     def initialize(opts)
       @name = opts[:name] || raise('Must specify name for a player')
+      @color = opts[:color] || [255, 0, 255]
       @energy = START_ENERGY
     end
 

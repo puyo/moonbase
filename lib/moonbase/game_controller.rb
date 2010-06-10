@@ -1,6 +1,7 @@
 require 'moonbase/game'
 require 'moonbase/map_view'
 require 'moonbase/building_views'
+require 'moonbase/projectiles'
 
 module Moonbase
   class GameController
@@ -65,14 +66,20 @@ module Moonbase
     end
 
     def create_game_demo
-      p1 = Moonbase::Player.new(:name => 'P1')
-      p2 = Moonbase::Player.new(:name => 'P2')
+      p1 = Moonbase::Player.new(:name => 'P1', :color => [255, 0, 0])
+      p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
       add_player(p1)
       add_player(p2)
       map = Map.new(:width => 100, :height => 100)
       set_map map
-      h1 = Hub.new(:position => Map.coordinate_3d([500, 500]), :owner => p1)
+      h1 = Hub.new(:position => Vector3D.new(0, 0, 0), :owner => p1)
       add_building(h1)
+      h2 = Hub.new(:position => Vector3D.new(32, 32, 0), :owner => p2)
+      add_building(h2)
+      b1 = Bomb.new(:position => Vector3D.new(0, 0, 0),
+                    :velocity => Vector3D.new(10, 10, 20),
+                    :owner => p1)
+      add_projectile(b1)
     end
     
     def set_map(map)
@@ -87,12 +94,13 @@ module Moonbase
 
     def add_building(building)
       @game.add_building(building)
-      view = BuildingView.new(building)
+      view = BuildingView.new(building, @map_view)
       @building_views[building] = view
       @sprite_group.push(view)
     end
 
-    def on_projectile_create(projectile)
+    def add_projectile(projectile)
+      #@game.add_projectile(projectile)
     end
 
     def add_sprite_hooks(*objects)
