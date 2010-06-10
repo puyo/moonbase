@@ -8,9 +8,11 @@ module Moonbase
       @owner = opts[:owner] || raise('Must specify projectile owner')
     end
 
-    def tick(game)
+    def update(seconds)
       # move projectile, taking into account wind, velocity and obstacles
       # physics engine?
+      @position += @velocity
+      @velocity.h -= 1
     end
   end
 

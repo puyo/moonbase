@@ -2,13 +2,14 @@ require 'moonbase/game'
 require 'moonbase/map_view'
 require 'moonbase/building_views'
 require 'moonbase/projectiles'
+require 'moonbase/projectile_views'
+require 'moonbase/shadow'
 
 module Moonbase
   class GameController
     include EventHandler::HasEventHandler
 
     def initialize
-      @building_views = Hash.new {|h, k| h[k] = [] }
       create_sprite_group
       create_game
       create_pressed_hooks
@@ -77,7 +78,7 @@ module Moonbase
       h2 = Hub.new(:position => Vector3D.new(32, 32, 0), :owner => p2)
       add_building(h2)
       b1 = Bomb.new(:position => Vector3D.new(0, 0, 0),
-                    :velocity => Vector3D.new(10, 10, 20),
+                    :velocity => Vector3D.new(-4, 2, 20),
                     :owner => p1)
       add_projectile(b1)
     end
@@ -95,12 +96,15 @@ module Moonbase
     def add_building(building)
       @game.add_building(building)
       view = BuildingView.new(building, @map_view)
-      @building_views[building] = view
       @sprite_group.push(view)
     end
 
     def add_projectile(projectile)
-      #@game.add_projectile(projectile)
+      @game.add_projectile(projectile)
+      shadow = Shadow.new(projectile, @map_view)
+      @sprite_group.push(shadow)
+      view = ProjectileView.new(projectile, @map_view)
+      @sprite_group.push(view)
     end
 
     def add_sprite_hooks(*objects)

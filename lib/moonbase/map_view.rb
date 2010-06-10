@@ -7,15 +7,16 @@ module Moonbase
 
     attr_accessor :vx, :vy
     attr_reader :scroll_x, :scroll_y
+    attr_reader :map
 
     def initialize(map)
       super()
       @vx, @vy = 0, 0
-      @scroll_x = 0
-      @scroll_y = 0
       @tile_size = 32
       @g = @tile_size
       @gh = @tile_size/2
+      @scroll_x = width*@gh/2
+      @scroll_y = height*@gh/2
       @map = map
       @position = Vector3D.origin
       create_image
@@ -31,7 +32,7 @@ module Moonbase
 
     def iso_rect(position3d, size)
       x2d = position3d.x - position3d.y
-      y2d = position3d.x + position3d.y
+      y2d = position3d.x + position3d.y - position3d.h
       Rect.new(@scroll_x + x2d - size[0]/2, @scroll_y + y2d - size[1]/2, *size)
     end
 

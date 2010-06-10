@@ -9,5 +9,9 @@ module Moonbase
     def self.origin
       new(0.0, 0.0, 0.0)
     end
+
+    def +(other)
+      Vector3D.new(@x + other.x, @y + other.y, @h + other.h)
+    end
   end
 end

@@ -24,9 +24,6 @@ module Moonbase
     end
 
     def start
-      #raise 'Players required' if @players.empty?
-      #raise 'Buildings required' if @buildings.empty?
-      #raise 'Map required' if @map.nil?
       @phase = :orders
     end
 
