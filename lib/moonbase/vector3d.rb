@@ -13,5 +13,9 @@ module Moonbase
     def +(other)
       Vector3D.new(@x + other.x, @y + other.y, @h + other.h)
     end
+
+    def *(scalar)
+      Vector3D.new(@x * scalar, @y * scalar, @h * scalar)
+    end
   end
 end

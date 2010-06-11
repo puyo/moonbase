@@ -27,16 +27,21 @@ module Moonbase
       @phase = :orders
     end
 
-    def tick
+    def on_tick(milliseconds)
       if @phase == :orders
-        tick_orders
+        on_tick_orders(milliseconds)
       elsif @phase == :move
-        tick_move
+        on_tick_move(milliseconds)
       end
     end
 
-    def tick_move
-      #puts 'tick_move'
+    def on_tick_move(milliseconds)
+      @projectiles.each do |owner, projectiles|
+        projectiles.each do |p|
+          p.on_tick(milliseconds)
+        end
+      end
+      # TODO: collision detection
       if not still_moving?
         @phase = :orders
         on_turn_start
@@ -47,8 +52,7 @@ module Moonbase
       @projectiles.size > 0
     end
 
-    def tick_orders
-      #puts 'tick_orders'
+    def on_tick_orders(milliseconds)
       @players.each do |p| 
         order = p.request_order(self)
         set_order(p, order) if order

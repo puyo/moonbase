@@ -25,8 +25,8 @@ module Moonbase
     end
 
     def update(event)
-      @scroll_x -= 500*event.seconds*@vx
-      @scroll_y -= 500*event.seconds*@vy
+      @scroll_x -= event.milliseconds*@vx*0.5
+      @scroll_y -= event.milliseconds*@vy*0.5
       update_rect
     end
 

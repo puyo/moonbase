@@ -17,8 +17,7 @@ module Moonbase
       update_rect
     end
 
-    def update(tick_event)
-      @projectile.update(tick_event.seconds)
+    def update(event)
       update_rect
     end
 

@@ -10,10 +10,12 @@ module Moonbase
     include EventHandler::HasEventHandler
 
     def initialize
+      @projectile_views = Hash.new {|h, k| h[k] = [] }
       create_sprite_group
       create_game
       create_pressed_hooks
       create_released_hooks
+      make_magic_hooks({:tick => :on_tick})
     end
 
     private
@@ -64,6 +66,7 @@ module Moonbase
     def create_game
       @game = Game.new
       create_game_demo
+      @game.start
     end
 
     def create_game_demo
@@ -85,6 +88,7 @@ module Moonbase
     
     def set_map(map)
       @game.map = map
+
       @map_view = MapView.new(map)
       @sprite_group.push(@map_view)
     end
@@ -95,23 +99,39 @@ module Moonbase
 
     def add_building(building)
       @game.add_building(building)
+
       view = BuildingView.new(building, @map_view)
       @sprite_group.push(view)
     end
 
     def add_projectile(projectile)
       @game.add_projectile(projectile)
+
       shadow = Shadow.new(projectile, @map_view)
       @sprite_group.push(shadow)
       view = ProjectileView.new(projectile, @map_view)
       @sprite_group.push(view)
+      @projectile_views[projectile].push view, shadow
+    end
+
+    def destroy_projectile(projectile)
+      @game.destroy_projectile(projectile)
+      @projectile_views[projectile].each do |sprite|
+        @sprite_group.delete(sprite)
+      end
+    end
+
+    def on_tick(event)
+      ms = event.milliseconds
+      @game.on_tick(ms)
+      # view hooks are currently handled by add_sprite_hooks
     end
 
     def add_sprite_hooks(*objects)
       objects.each do |object|
         append_hook :owner => object,
-          :trigger => Rubygame::EventTriggers::YesTrigger.new,
-          :action => Rubygame::EventActions::MethodAction.new(:handle)
+          :trigger => EventTriggers::YesTrigger.new,
+          :action => EventActions::MethodAction.new(:handle)
       end
     end
   end
