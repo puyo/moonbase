@@ -35,13 +35,14 @@ module Moonbase
       end
     end
 
+    def each_projectile(&block)
+      @projectiles.values.flatten.each(&block)
+    end
+
     def on_tick_move(milliseconds)
-      @projectiles.each do |owner, projectiles|
-        projectiles.each do |p|
-          p.on_tick(milliseconds)
-        end
+      each_projectile do |projectile|
+        projectile.on_tick(milliseconds)
       end
-      # TODO: collision detection
       if not still_moving?
         @phase = :orders
         on_turn_start
@@ -84,6 +85,10 @@ module Moonbase
 
     def add_projectile(projectile)
       @projectiles[projectile.owner].push(projectile)
+    end
+
+    def destroy_projectile(projectile)
+      @projectiles[projectile.owner].delete(projectile)
     end
 
     def set_order(player, order)

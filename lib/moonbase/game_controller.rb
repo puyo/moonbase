@@ -124,7 +124,17 @@ module Moonbase
     def on_tick(event)
       ms = event.milliseconds
       @game.on_tick(ms)
+      check_collisions
+
       # view hooks are currently handled by add_sprite_hooks
+    end
+
+    def check_collisions
+      @game.each_projectile do |projectile|
+        if projectile.position.h < @game.map.height(projectile.position.x, projectile.position.y)
+          destroy_projectile(projectile)
+        end
+      end
     end
 
     def add_sprite_hooks(*objects)
