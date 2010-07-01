@@ -25,7 +25,7 @@ module Moonbase
     def create_screen
       @screen = Screen.open([800, 600])
       @screen.title = 'Moonbase'
-      @screen.show_cursor = false
+      #@screen.show_cursor = false
     end
 
     def create_background
@@ -43,7 +43,7 @@ module Moonbase
     def create_queue
       @queue = EventQueue.new
       @queue.enable_new_style_events
-      @queue.ignore = [Rubygame::Events::MouseMoved]
+      #@queue.ignore = [Rubygame::Events::MouseMoved]
     end
 
     def create_game_controller

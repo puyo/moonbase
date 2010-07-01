@@ -6,12 +6,17 @@ module Moonbase
     START_ENERGY = 11
     BASE_ENERGY_PER_TURN = 7
 
-    attr_reader :name, :energy, :color
+    attr_reader :name, :energy, :color, :selected_building
 
     def initialize(opts)
       @name = opts[:name] || raise('Must specify name for a player')
       @color = opts[:color] || [255, 0, 255]
       @energy = START_ENERGY
+      @selected_building = nil
+    end
+
+    def select_building(building)
+      @selected_building = building
     end
 
     def request_order(game)
@@ -23,11 +28,21 @@ module Moonbase
     end
 
     def on_turn_start(game)
-      @energy += BASE_ENERGY_PER_TURN + extra_energy_per_turn(game)
+      @energy += energy_per_turn(game)
+    end
+
+    def energy_per_turn(game)
+      BASE_ENERGY_PER_TURN + extra_energy_per_turn(game)
     end
 
     def extra_energy_per_turn(game)
       0 # game.find_buildings(:owned_by => self, :type => Collector)...
+    end
+
+    def on_building_added(building)
+      if building.is_a?(Hub) and @selected_building.nil?
+        @selected_building = building
+      end
     end
   end
 end

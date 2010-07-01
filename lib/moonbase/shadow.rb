@@ -5,7 +5,7 @@ module Moonbase
     include EventHandler::HasEventHandler
     include Sprites::Sprite
 
-    MAX_HEIGHT = 200.0
+    MAX_HEIGHT = 400.0
     MIN_HEIGHT = 0.0
 
     def initialize(object, map_view)
@@ -23,7 +23,7 @@ module Moonbase
       @height = @object.position.h - @map_view.map.height(@object.position.x, @object.position.y)
       @image.fill([0, 0, 0])
       if is_drawn?
-        @image.draw_ellipse_s([16, 16], size, [64, 64, 64])
+        @image.draw_ellipse_s([16, 16], size, [1, 1, 1])
       end
     end
 

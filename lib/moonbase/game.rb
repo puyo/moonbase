@@ -15,8 +15,10 @@ module Moonbase
       @projectiles = Moonbase.hash_of_arrays
       @orders = {}
       @phase = :create
+      @mode = :hotseat
       @players = []
       @map = nil
+      @hotseat_player = nil
     end
 
     def map=(map)
@@ -25,6 +27,15 @@ module Moonbase
 
     def start
       @phase = :orders
+      hotseat_start if @mode == :hotseat
+    end
+
+    def hotseat_start
+      @hotseat_player = @players.first
+    end
+
+    def set_hotseat_player(player)
+      @hotseat_player = player
     end
 
     def on_tick(milliseconds)
@@ -37,6 +48,10 @@ module Moonbase
 
     def each_projectile(&block)
       @projectiles.values.flatten.each(&block)
+    end
+
+    def each_building(&block)
+      @buildings.values.flatten.each(&block)
     end
 
     def on_tick_move(milliseconds)
@@ -54,9 +69,18 @@ module Moonbase
     end
 
     def on_tick_orders(milliseconds)
-      @players.each do |p| 
-        order = p.request_order(self)
-        set_order(p, order) if order
+      if @mode == :hotseat
+        order = @hotseat_player.request_order(self)
+        if order
+          set_order(@hotseat_player, order) 
+          next_player = @players.find{|p| @orders[p].nil? }
+          set_hotseat_player(next_player) if next_player
+        end
+      else
+        @players.each do |p| 
+          order = p.request_order(self)
+          set_order(p, order) if order
+        end
       end
       if not awaiting_orders?
         @phase = :move
@@ -81,6 +105,7 @@ module Moonbase
 
     def add_building(building)
       @buildings[building.owner] = building
+      building.owner.on_building_added(building)
     end
 
     def add_projectile(projectile)

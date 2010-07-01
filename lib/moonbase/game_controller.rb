@@ -15,7 +15,13 @@ module Moonbase
       create_game
       create_pressed_hooks
       create_released_hooks
-      make_magic_hooks({:tick => :on_tick})
+      make_magic_hooks({
+        :tick => :on_tick,
+        :mouse_left => :on_click,
+      })
+      append_hook :owner => self,
+        :trigger => EventTriggers::MouseMoveTrigger.new,
+        :action => EventActions::MethodAction.new(:on_mouse_move)
     end
 
     private
@@ -127,6 +133,20 @@ module Moonbase
       check_collisions
 
       # view hooks are currently handled by add_sprite_hooks
+    end
+
+    def on_click(event)
+      get_building_clicked(event.pos)
+    end
+
+    def on_mouse_move(event)
+      @map_view.select_tile(event.pos)
+    end
+
+    def get_building_clicked(pos)
+      @game.each_building do |building|
+        p building
+      end
     end
 
     def check_collisions
