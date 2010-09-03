@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'moonbase/bomb_list'
 
 include Moonbase
