@@ -1,0 +1,36 @@
+# Location of OGRE SDK installation
+OGRESDK=$(HOME)/OgreSDK
+
+# ----------
+
+CXX=g++
+CXXFLAGS=-m32 -g -fvisibility=hidden
+CXXFLAGS+=-I$(OGRESDK)/boost_1_42 # boost
+CXXFLAGS+=-I$(OGRESDK)/include # OIS
+CXXFLAGS+=-I$(OGRESDK)/include/OGRE # #include "Ogre.h"
+CXXFLAGS+=`pkg-config ode --cflags`
+
+LDFLAGS=-m32
+LDFLAGS+=-F$(OGRESDK)/lib/release -framework Ogre -lpthread 
+LDFLAGS+=$(OGRESDK)/lib/release/libOIS.a
+LDFLAGS+=-L$(OGRESDK)/lib
+LDFLAGS+=-framework Cocoa -framework Carbon -framework IOKit
+LDLIBS=`pkg-config ode --libs`
+
+PACKAGE_DIR=Moonbase.app
+CLIENT=$(PACKAGE_DIR)/Contents/MacOS/moonbase
+CLIENT_OBJS=Game.o GameObject.o Player.o Map.o client-main.o
+
+$(CLIENT): package_dir $(CLIENT_OBJS)
+	$(CXX) $(LDFLAGS) $(CLIENT_OBJS) -o $@ $(LDLIBS)
+
+# Recompile if Makefile changes
+#$(CLIENT): Makefile.osx
+#$(CLIENT_OBJS): Makefile.osx
+
+clean:
+	$(RM) *.o $(CLIENT)
+
+# setup OSX app bundle
+package_dir::
+	rsync -r --links $(OGRESDK)/lib/release/Ogre.framework $(PACKAGE_DIR)/Contents/Frameworks/

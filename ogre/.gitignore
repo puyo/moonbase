@@ -7,3 +7,4 @@ stamp-h1
 moonbase
 moonbased
 autom4te.cache
+src/*.app
