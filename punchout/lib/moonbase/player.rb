@@ -7,6 +7,7 @@ module Moonbase
     BASE_ENERGY_PER_TURN = 7
 
     attr_reader :name, :energy, :color, :selected_building, :hubs, :bombs
+    attr_accessor :id, :order
 
     def initialize(opts)
       @name = opts[:name] || raise('Must specify name for a player')
@@ -15,6 +16,8 @@ module Moonbase
       @selected_building = nil
       @hubs = []
       @bombs = []
+      @id = nil
+      @order = nil
     end
 
     def select_building(building)

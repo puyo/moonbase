@@ -13,13 +13,12 @@ module Moonbase
   class Game
     include EventHandler::HasEventHandler
 
-    attr_reader :map, :players, :phase, :hubs, :bombs
+    attr_reader :map, :phase, :hubs, :bombs
 
     def initialize(opts = {})
-      @orders = {}
       @phase = :create
       @mode = :hotseat
-      @players = []
+      @players = {}
       @map = nil
       @hotseat_player = nil
 
@@ -38,13 +37,21 @@ module Moonbase
       start
     end
 
+    def players
+      @players.values
+    end
+
+    def orders
+      players.map(&:order)
+    end
+
     def start
       @phase = :orders
       hotseat_start if @mode == :hotseat
     end
 
     def hotseat_start
-      @hotseat_player = @players.first
+      @hotseat_player = players.first
     end
 
     def set_hotseat_player(player)
@@ -60,11 +67,11 @@ module Moonbase
     end
 
     def bombs
-      @players.map(&:bombs).flatten
+      players.map(&:bombs).flatten
     end
 
     def hubs
-      @players.map(&:hubs).flatten
+      players.map(&:hubs).flatten
     end
 
     def on_tick_move(event)
@@ -88,11 +95,11 @@ module Moonbase
         order = @hotseat_player.request_order(self)
         if order
           set_order(@hotseat_player, order)
-          next_player = @players.find{|p| @orders[p].nil? }
+          next_player = players.find{|p| p.order.nil? }
           set_hotseat_player(next_player) if next_player
         end
       else
-        @players.each do |p|
+        players.each do |p|
           order = p.request_order(self)
           set_order(p, order) if order
         end
@@ -104,18 +111,19 @@ module Moonbase
     end
 
     def process_orders
-      @orders.each do |player, order|
-        order.process(self, player)
+      players.each do |player|
+        player.order.process(self, player) if player.order
+        player.order = nil
       end
-      @orders.clear
     end
 
     def awaiting_orders?
-      @orders.size < @players.size
+      orders.size < players.size
     end
 
     def add_player(player)
-      @players.push player
+      id = player.id = (@players.keys.max || 0).next
+      @players[id] = player
     end
 
     def add_hub(hub)
@@ -141,14 +149,11 @@ module Moonbase
     end
 
     def set_order(player, order)
-      @orders[player] = order
+      player.order = order
     end
 
     def remove_player(player)
-      @players.delete(player)
-      @orders.delete(player)
-      @bombs.delete(player)
-      @hubs.delete(player)
+      @players.delete(player.id)
       if @players.empty?
         @phase = :quit
       end
@@ -156,7 +161,7 @@ module Moonbase
 
     def on_turn_start
       #puts 'on_turn_start'
-      @players.each{|p| p.on_turn_start(self) }
+      players.each{|p| p.on_turn_start(self) }
     end
 
     def map=(map)
