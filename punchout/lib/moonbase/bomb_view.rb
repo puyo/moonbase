@@ -1,7 +1,7 @@
 require 'moonbase/events'
 
 module Moonbase
-  class ProjectileView
+  class BombView
     include EventHandler::HasEventHandler
     include Sprites::Sprite
 

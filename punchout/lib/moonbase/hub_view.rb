@@ -1,7 +1,7 @@
 require 'moonbase/events'
 
-module Moonbase 
-  class BuildingView
+module Moonbase
+  class HubView
     include EventHandler::HasEventHandler
     include Sprites::Sprite
 
@@ -16,7 +16,7 @@ module Moonbase
       redraw
       update_rect
     end
-    
+
     def update(event)
       @t += event.milliseconds
       while @t > 1000

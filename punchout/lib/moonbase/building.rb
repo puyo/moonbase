@@ -7,7 +7,5 @@ module Moonbase
       @owner = opts[:owner] || raise(ArgumentError, 'owner required')
     end
   end
-
-  class Hub < Building
-  end
 end
+

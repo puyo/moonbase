@@ -13,8 +13,4 @@ module Moonbase
       @velocity.h -= milliseconds / 50.0
     end
   end
-
-  class Bomb < Projectile
-    @energy_cost = 1
-  end
 end

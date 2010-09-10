@@ -14,18 +14,12 @@ module Moonbase
     def initialize(opts = {})
       @from = opts[:from] || raise('Must specify coordinate to shoot from')
       @direction = opts[:direction] || raise('Must specify shoot direction')
-      @projectile_class = opts[:projectile_class] || raise('Must specify projectile class to shoot')
+      @projectile = opts[:projectile] || raise('Must specify projectile object to shoot')
       @power = opts[:power] || raise('Must specify shoot power')
     end
 
-    def new_projectile(owner)
-      @projectile_class.new(:position => @from.dup,
-                            :velocity => Vector3D.new(10, 10, 20),
-                            :owner => owner)
-    end
-
     def process(game, player)
-      game.add_projectile(new_projectile(player))
+      game.add_bomb(@projectile)
     end
   end
 

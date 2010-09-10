@@ -91,7 +91,7 @@ module Moonbase
                     :owner => p1)
       add_projectile(b1)
     end
-    
+
     def set_map(map)
       @game.map = map
 

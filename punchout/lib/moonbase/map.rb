@@ -1,6 +1,3 @@
-require 'moonbase/player'
-require 'moonbase/buildings'
-
 module Moonbase
   class Map
     attr_reader :width, :height

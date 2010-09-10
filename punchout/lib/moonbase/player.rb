@@ -6,13 +6,15 @@ module Moonbase
     START_ENERGY = 11
     BASE_ENERGY_PER_TURN = 7
 
-    attr_reader :name, :energy, :color, :selected_building
+    attr_reader :name, :energy, :color, :selected_building, :hubs, :bombs
 
     def initialize(opts)
       @name = opts[:name] || raise('Must specify name for a player')
       @color = opts[:color] || [255, 0, 255]
       @energy = START_ENERGY
       @selected_building = nil
+      @hubs = []
+      @bombs = []
     end
 
     def select_building(building)
@@ -24,7 +26,8 @@ module Moonbase
     end
 
     def random_order
-      ShootOrder.new(:from => Vector3D.origin, :projectile_class => Bomb, :direction => 0, :power => 10)
+      bomb = Bomb.new(:position => Vector3D.origin, :velocity => Vector3D.new(-4, 2, 20), :owner => self)
+      ShootOrder.new(:from => Vector3D.origin, :projectile => bomb, :direction => 0, :power => 10)
     end
 
     def on_turn_start(game)

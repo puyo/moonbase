@@ -2,7 +2,7 @@ require 'rubygems' rescue nil
 require 'rubygame'
 include Rubygame
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
-require 'moonbase/game_controller'
+require 'moonbase/game'
 
 module Moonbase
   class Main
@@ -18,7 +18,7 @@ module Moonbase
       create_background
       create_clock
       create_queue
-      create_game_controller
+      create_game
       create_hooks
     end
 
@@ -46,10 +46,10 @@ module Moonbase
       #@queue.ignore = [Rubygame::Events::MouseMoved]
     end
 
-    def create_game_controller
-      @game_controller = GameController.new
+    def create_game
+      @game = Game.new
       # pass on events not handled here
-      append_hook :owner => @game_controller, 
+      append_hook :owner => @game,
         :trigger => Rubygame::EventTriggers::YesTrigger.new,
         :action => Rubygame::EventActions::MethodAction.new(:handle)
     end
@@ -76,7 +76,7 @@ module Moonbase
       @queue << @clock.tick
       @queue << Events::DrawSprites.new(@screen)
       @screen.update
-      @queue.each do |event| 
+      @queue.each do |event|
         handle(event)
       end
     end
