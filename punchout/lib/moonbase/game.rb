@@ -192,7 +192,7 @@ module Moonbase
       @sprite_group.make_magic_hooks({
         Moonbase::Events::DrawSprites => :on_draw,
         Moonbase::Events::UndrawSprites => :on_undraw,
-        :tick => :update,
+        :tick => proc { |group, event| group.each{|s| s.update(event.milliseconds) } },
       })
       add_sprite_hooks(@sprite_group)
     end

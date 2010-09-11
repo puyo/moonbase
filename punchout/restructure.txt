@@ -39,5 +39,5 @@ STEPS
 
 + Combined Game and GameController
 + Put player stuff in Player
-- Factor out Phase
+- Move all event handling into Game
 - Factor out Viewport

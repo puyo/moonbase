@@ -1,8 +1,7 @@
 require 'moonbase/events'
 
-module Moonbase 
+module Moonbase
   class MapView
-    include EventHandler::HasEventHandler
     include Sprites::Sprite
 
     attr_accessor :vx, :vy
@@ -29,9 +28,9 @@ module Moonbase
       p coords
     end
 
-    def update(event)
-      @scroll_x -= event.milliseconds*@vx*0.5
-      @scroll_y -= event.milliseconds*@vy*0.5
+    def update(ms)
+      @scroll_x -= ms*@vx*0.5
+      @scroll_y -= ms*@vy*0.5
       update_rect
     end
 
@@ -39,7 +38,7 @@ module Moonbase
       #x2d = position3d.x - position3d.y
       #y2d = position3d.x + position3d.y - position3d.h
       #Rect.new(@scroll_x + x2d - size[0]/2, @scroll_y + y2d - size[1]/2, *size)
-      
+
       xy2d = surface_to_viewport_coordinates(position3d.x, position3d.y, position3d.h)
       Rect.new(@scroll_x + xy2d[0] - size[0]/2, @scroll_y + xy2d[1] - size[1]/2, *size)
     end
@@ -51,7 +50,7 @@ module Moonbase
       y = (y2d - x2d)/2
       Vector3D.new(x, y, 0)
     end
-    
+
     def surface_to_viewport_coordinates(x, y, h)
       x2d = width*@g + x - y
       y2d = (x + y - h)/2
