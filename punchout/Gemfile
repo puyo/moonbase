@@ -1,0 +1,8 @@
+source "http://rubygems.org"
+
+gem "rspec"
+gem "rubygame"
+gem "rake"
+gem "roodi"
+gem "flog"
+gem "flay"
