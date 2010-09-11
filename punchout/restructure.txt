@@ -1,12 +1,3 @@
-Main
-    GameController (event management)
-        Game (model)
-            Map
-            Projectiles { player => [] }
-            Buildings { player => [] }
-            Players []
-            Orders
-
 Moonbase (event dispatch)
     @screen
     @viewport
@@ -46,4 +37,7 @@ game.click {
 STEPS
 =====
 
-- Put player stuff in Player
++ Combined Game and GameController
++ Put player stuff in Player
+- Factor out Phase
+- Factor out Viewport

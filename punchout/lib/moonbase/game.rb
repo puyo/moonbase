@@ -8,6 +8,10 @@ require 'moonbase/hub_view'
 require 'moonbase/bomb'
 require 'moonbase/bomb_view'
 require 'moonbase/shadow'
+require 'moonbase/create_phase'
+require 'moonbase/orders_phase'
+require 'moonbase/move_phase'
+require 'moonbase/quit_phase'
 
 module Moonbase
   class Game
@@ -16,7 +20,7 @@ module Moonbase
     attr_reader :map, :phase, :hubs, :bombs
 
     def initialize(opts = {})
-      @phase = :create
+      @phase = CreatePhase
       @mode = :hotseat
       @players = {}
       @map = nil
@@ -46,7 +50,7 @@ module Moonbase
     end
 
     def start
-      @phase = :orders
+      @phase = OrdersPhase
       hotseat_start if @mode == :hotseat
     end
 
@@ -59,9 +63,9 @@ module Moonbase
     end
 
     def on_tick(milliseconds)
-      if @phase == :orders
+      if @phase == OrdersPhase
         on_tick_orders(milliseconds)
-      elsif @phase == :move
+      elsif @phase == MovePhase
         on_tick_move(milliseconds)
       end
     end
@@ -81,7 +85,7 @@ module Moonbase
       end
       check_collisions
       if not still_moving?
-        @phase = :orders
+        @phase = OrdersPhase
         on_turn_start
       end
     end
@@ -105,7 +109,7 @@ module Moonbase
         end
       end
       if not awaiting_orders?
-        @phase = :move
+        @phase = MovePhase
         process_orders
       end
     end
@@ -155,7 +159,7 @@ module Moonbase
     def remove_player(player)
       @players.delete(player.id)
       if @players.empty?
-        @phase = :quit
+        @phase = QuitPhase
       end
     end
 
