@@ -9,7 +9,8 @@ module Moonbase
     end
 
     def on_tick(milliseconds)
-      @position += @velocity * (milliseconds / 50.0)
+      delta = @velocity.dup.multiply_by(milliseconds / 50.0)
+      @position.add(delta.x, delta.y, delta.h)
       @velocity.h -= milliseconds / 50.0
     end
   end

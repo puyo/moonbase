@@ -1,11 +1,12 @@
 require 'moonbase/game'
-require 'moonbase/projectiles'
+require 'moonbase/bomb'
 
 include Moonbase
 
 describe Game do
   describe 'creation' do
     it 'supports valid parameters' do
+      Game.new
       lambda do
         Game.new
       end.should_not raise_exception
@@ -22,8 +23,8 @@ describe Game do
   def new_shoota
     shoota = mock('shoota')
     order = ShootOrder.new(:from => Vector3D.origin,
-                           :direction => 0, 
-                           :power => 10, 
+                           :direction => 0,
+                           :power => 10,
                            :projectile_class => Bomb)
     shoota.should_receive(:request_order).and_return(order)
     shoota

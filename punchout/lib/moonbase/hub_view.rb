@@ -1,14 +1,15 @@
 require 'moonbase/events'
+require 'rubygame'
 
 module Moonbase
   class HubView
-    include EventHandler::HasEventHandler
+    include Rubygame
     include Sprites::Sprite
 
     def initialize(hub, map_view)
       super()
       @map_view = map_view
-      @image = Surface.new([40, 32], 0, Surface::HWSURFACE)
+      @image = Surface.new([40, 32], 0)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha rescue nil
       @selected = false

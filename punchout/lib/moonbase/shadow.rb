@@ -1,8 +1,9 @@
 require 'moonbase/events'
+require 'rubygame'
 
-module Moonbase 
+module Moonbase
   class Shadow
-    include EventHandler::HasEventHandler
+    include Rubygame
     include Sprites::Sprite
 
     MAX_HEIGHT = 400.0
@@ -12,7 +13,7 @@ module Moonbase
       super()
       @object = object
       @map_view = map_view
-      @image = Surface.new([32, 32], 0, Surface::HWSURFACE)
+      @image = Surface.new([32, 32], 0)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha rescue nil
       redraw
@@ -35,8 +36,8 @@ module Moonbase
       scale = (MAX_HEIGHT - @height)/MAX_HEIGHT
       [8 * scale, 4 * scale]
     end
-    
-    def update(event)
+
+    def update(milliseconds)
       redraw
       update_rect
     end

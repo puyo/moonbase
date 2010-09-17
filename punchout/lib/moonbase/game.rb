@@ -12,9 +12,12 @@ require 'moonbase/create_phase'
 require 'moonbase/orders_phase'
 require 'moonbase/move_phase'
 require 'moonbase/quit_phase'
+require 'moonbase/viewport'
+require 'rubygame'
 
 module Moonbase
   class Game
+    include Rubygame
     include EventHandler::HasEventHandler
 
     attr_reader :map, :phase, :hubs, :bombs
@@ -32,13 +35,20 @@ module Moonbase
       create_pressed_hooks
       create_released_hooks
       make_magic_hooks({
-        :tick => :on_tick,
-        :mouse_left => :on_click,
+        :tick => proc { |target, event| target.tick(event.milliseconds) },
+        :mouse_left => :on_mouse_click,
       })
-      append_hook :owner => self,
-        :trigger => EventTriggers::MouseMoveTrigger.new,
-        :action => EventActions::MethodAction.new(:on_mouse_move)
+      append_hook :owner => self, :trigger => EventTriggers::MouseMoveTrigger.new, :action => EventActions::MethodAction.new(:on_mouse_move)
+
+      create_test_bomb
+
       start
+    end
+
+    def create_test_bomb
+      @test_bomb = Bomb.new(:position => Vector3D.new(0, 0, 0), :velocity => Vector3D.new(0, 0, 0), :owner => @players.values.first)
+      view = BombView.new(@test_bomb, @map_view)
+      @sprite_group.push(view)
     end
 
     def players
@@ -62,7 +72,7 @@ module Moonbase
       @hotseat_player = player
     end
 
-    def on_tick(milliseconds)
+    def tick(milliseconds)
       if @phase == OrdersPhase
         on_tick_orders(milliseconds)
       elsif @phase == MovePhase
@@ -78,8 +88,7 @@ module Moonbase
       players.map(&:hubs).flatten
     end
 
-    def on_tick_move(event)
-      milliseconds = event.milliseconds
+    def on_tick_move(milliseconds)
       bombs.each do |bomb|
         bomb.on_tick(milliseconds)
       end
@@ -170,7 +179,8 @@ module Moonbase
 
     def map=(map)
       @map = map
-      @map_view = MapView.new(map)
+      @viewport = Viewport.new
+      @map_view = MapView.new(map, @viewport)
       @sprite_group.push(@map_view)
     end
 
@@ -179,6 +189,7 @@ module Moonbase
     def create_sprite_group
       @sprite_group = Sprites::Group.new
       class << @sprite_group
+        include Rubygame
         include EventHandler::HasEventHandler
         def on_draw(event)
           dirty_rects = draw(event.screen)
@@ -236,18 +247,27 @@ module Moonbase
       add_bomb(b1)
     end
 
-    def on_click(event)
+    def on_mouse_click(event)
       get_hub_clicked(event.pos)
     end
 
     def on_mouse_move(event)
-      @map_view.select_tile(event.pos)
+      result = @viewport.viewport_to_surface_coordinate(event.pos)
+      @test_bomb.position.x = result[0]
+      @test_bomb.position.y = result[1]
+      #@map_view.select_tile(event.pos)
     end
 
     def get_hub_clicked(pos)
+      puts
+      puts
+      coords = @map_view.viewport_to_surface_coordinate(*pos)
+      p pos
+      p coords
       hubs.each do |hub|
         p hub
       end
+      puts
     end
 
     def check_collisions

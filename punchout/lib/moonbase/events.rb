@@ -1,5 +1,8 @@
+require 'rubygame'
+
 module Moonbase
   module Events
+    include Rubygame
     def self.pressed(key)
       key
     end

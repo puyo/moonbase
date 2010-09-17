@@ -1,4 +1,5 @@
-require 'moonbase/buildings'
+require 'moonbase/hub'
+require 'moonbase/player'
 require 'moonbase/vector3d'
 
 include Moonbase

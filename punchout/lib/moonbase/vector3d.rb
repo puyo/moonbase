@@ -10,12 +10,21 @@ module Moonbase
       new(0.0, 0.0, 0.0)
     end
 
-    def +(other)
-      Vector3D.new(@x + other.x, @y + other.y, @h + other.h)
+    def add(x, y, h)
+      @x += x
+      @y += y
+      @h += h
     end
 
-    def *(scalar)
-      Vector3D.new(@x * scalar, @y * scalar, @h * scalar)
+    def multiply_by(scalar)
+      @x *= scalar
+      @y *= scalar
+      @h *= scalar
+      self
+    end
+
+    def ==(other)
+      @x == other.x and @y == other.y and @h == other.h
     end
   end
 end

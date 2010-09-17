@@ -1,5 +1,6 @@
 require 'rubygems' rescue nil
 require 'rubygame'
+
 include Rubygame
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 require 'moonbase/game'
