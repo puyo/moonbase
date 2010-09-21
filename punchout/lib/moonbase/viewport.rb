@@ -1,13 +1,16 @@
 module Moonbase
   class Viewport
+    attr_accessor :scroll_x, :scroll_y
+
     def initialize(tile_size = 32)
-      @tile_size = tile_size
-      @g = tile_size
-      @gh = tile_size/2
+      @scroll_x = 0
+      @scroll_y = 0
     end
 
     def viewport_to_surface_coordinate(coord)
       vx, vy = coord
+      vx -= @scroll_x
+      vy -= @scroll_y
       h = 0
       sx = vx/2 + vy - h
       sy = -vx/2 + vy - h
@@ -19,7 +22,7 @@ module Moonbase
       h = 0
       vx = sx - sy
       vy = (sx + sy)/2 + h
-      [vx, vy]
+      [@scroll_x + vx, @scroll_y + vy]
     end
   end
 end

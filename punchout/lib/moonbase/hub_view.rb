@@ -16,6 +16,7 @@ module Moonbase
       @color = hub.owner.color
       @t = 0
       @hub = hub
+      @rect = @image.make_rect
       redraw
       update_rect
     end
@@ -47,7 +48,7 @@ module Moonbase
     private
 
     def update_rect
-      @rect = @map_view.iso_rect(@hub.position, @image.size)
+      @map_view.update_iso_rect(@hub.position, @rect)
     end
   end
 end

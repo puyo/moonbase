@@ -16,6 +16,7 @@ module Moonbase
       @image = Surface.new([32, 32], 0)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha rescue nil
+      @rect = @image.make_rect
       redraw
       update_rect
     end
@@ -45,7 +46,7 @@ module Moonbase
     private
 
     def update_rect
-      @rect = @map_view.iso_rect(@map_view.map.surface_coordinate(@object.position.x, @object.position.y), @image.size)
+      @map_view.update_iso_rect(@map_view.map.surface_coordinate(@object.position.x, @object.position.y), @rect)
     end
   end
 end

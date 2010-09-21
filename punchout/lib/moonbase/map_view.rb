@@ -7,7 +7,6 @@ module Moonbase
     include Sprites::Sprite
 
     attr_accessor :vx, :vy
-    attr_reader :scroll_x, :scroll_y
     attr_reader :map
 
     def initialize(map, viewport)
@@ -17,8 +16,8 @@ module Moonbase
       @tile_size = 32
       @g = @tile_size
       @gh = @tile_size/2
-      @scroll_x = -width*@g + 300
-      @scroll_y = height*@gh/2
+      #@scroll_x = -width*@g + 300
+      #@scroll_y = height*@gh/2
       @map = map
       @position = Vector3D.origin
       create_image
@@ -27,14 +26,14 @@ module Moonbase
     end
 
     def update(ms)
-      @scroll_x -= ms*@vx*0.5
-      @scroll_y -= ms*@vy*0.5
+      @viewport.scroll_x -= ms*@vx*0.5
+      @viewport.scroll_y -= ms*@vy*0.5
       update_rect
     end
 
-    def iso_rect(position3d, size)
+    def update_iso_rect(position3d, rect)
       xy2d = @viewport.surface_to_viewport_coordinates([position3d.x, position3d.y])
-      Rect.new(@scroll_x + xy2d[0], @scroll_y + xy2d[1], *size)
+      rect.topleft = xy2d
     end
 
     private
@@ -46,6 +45,7 @@ module Moonbase
       @image = Surface.new([(width + height)*@g, (width + height)*@gh], 0)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha rescue nil
+      @rect = @image.make_rect
     end
 
     def each_tile_coordinate
@@ -70,6 +70,7 @@ module Moonbase
 
     def draw_iso_tile(i, j)
       xy2d = @viewport.surface_to_viewport_coordinates([i*@tile_size, j*@tile_size])
+      xy2d[0] += @image.size[0]/2 - @g
       points = iso_tile_points(*xy2d)
       @image.draw_polygon_s(points, color(i, j))
       @image.draw_polygon(points, Color[:black])
@@ -85,7 +86,7 @@ module Moonbase
     end
 
     def update_rect
-      @rect = iso_rect(@position, @image.size)
+      update_iso_rect(@position, @rect)
     end
   end
 end

@@ -15,6 +15,7 @@ module Moonbase
       @image.to_display_alpha rescue nil
       @image.draw_circle_s([16, 16], 8, @projectile.owner.color.map{|c| c/2 })
       @image.draw_circle([16, 16], 8, [255, 255, 255])
+      @rect = @image.make_rect
       update_rect
     end
 
@@ -25,7 +26,7 @@ module Moonbase
     private
 
     def update_rect
-      @rect = @map_view.iso_rect(@projectile.position, @image.size)
+      @map_view.update_iso_rect(@projectile.position, @rect)
     end
   end
 end
