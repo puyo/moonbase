@@ -252,9 +252,10 @@ module Moonbase
     end
 
     def on_mouse_move(event)
-      result = @viewport.viewport_to_surface_coordinate(event.pos)
+      result = @map_view.surface_position(event.pos)
       @test_bomb.position.x = result[0]
       @test_bomb.position.y = result[1]
+      p @test_bomb.position
       #@map_view.select_tile(event.pos)
     end
 

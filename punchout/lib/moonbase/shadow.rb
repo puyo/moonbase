@@ -46,7 +46,7 @@ module Moonbase
     private
 
     def update_rect
-      @map_view.update_iso_rect(@map_view.map.surface_coordinate(@object.position.x, @object.position.y), @rect)
+      @rect.topleft = @map_view.draw_position([@object.position.x, @object.position.y])
     end
   end
 end

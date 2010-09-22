@@ -12,7 +12,6 @@ module Moonbase
       @image = Surface.new([40, 32], 0)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha rescue nil
-      @selected = false
       @color = hub.owner.color
       @t = 0
       @hub = hub
@@ -22,7 +21,6 @@ module Moonbase
     end
 
     def update(milliseconds)
-      @selected = @hub.selected
       @t += milliseconds
       while @t > 1000
         @t -= 1000
@@ -32,7 +30,7 @@ module Moonbase
     end
 
     def redraw
-      if @selected
+      if @hub.selected
         if @t > 500
           i = 1000 - @t
         else
@@ -48,7 +46,7 @@ module Moonbase
     private
 
     def update_rect
-      @map_view.update_iso_rect(@hub.position, @rect)
+      @rect.topleft = @map_view.draw_position([@hub.position.x, @hub.position.y])
     end
   end
 end

@@ -31,12 +31,21 @@ module Moonbase
       update_rect
     end
 
-    def update_iso_rect(position3d, rect)
-      xy2d = @viewport.surface_to_viewport_coordinates([position3d.x, position3d.y])
-      rect.topleft = xy2d
+    def draw_position(xy3d)
+      xy2d = @viewport.surface_to_viewport_coordinates(xy3d)
+      xy2d[0] += x_image_offset
+      xy2d
+    end
+
+    def surface_position(xy2d)
+      @viewport.viewport_to_surface_coordinate([xy2d[0] - x_image_offset, xy2d[1]])
     end
 
     private
+
+    def x_image_offset
+      @image.size[0]/2 - @g
+    end
 
     def width; 50 end
     def height; 50 end
@@ -69,8 +78,7 @@ module Moonbase
     end
 
     def draw_iso_tile(i, j)
-      xy2d = @viewport.surface_to_viewport_coordinates([i*@tile_size, j*@tile_size])
-      xy2d[0] += @image.size[0]/2 - @g
+      xy2d = draw_position([i*@tile_size, j*@tile_size])
       points = iso_tile_points(*xy2d)
       @image.draw_polygon_s(points, color(i, j))
       @image.draw_polygon(points, Color[:black])
@@ -86,7 +94,7 @@ module Moonbase
     end
 
     def update_rect
-      update_iso_rect(@position, @rect)
+      @rect.topleft = @viewport.surface_to_viewport_coordinates([@position.x, @position.y])
     end
   end
 end
