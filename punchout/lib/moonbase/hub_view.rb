@@ -36,8 +36,10 @@ module Moonbase
         else
           i = @t
         end
-        i = i * 255 / 1000
+        i = i * 255 / 500
         @image.draw_ellipse_s([20, 16], [18, 9], [i, 255, i])
+      else
+        @image.fill([0, 0, 0])
       end
       @image.draw_ellipse_s([20, 16], [14, 7], [1, 1, 1])
       @image.draw_ellipse_s([20, 14], [14, 7], @color)

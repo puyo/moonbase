@@ -29,7 +29,9 @@ module Moonbase
     end
 
     def random_order
-      bomb = Bomb.new(:position => Vector3D.origin, :velocity => Vector3D.new(-4, 2, 20), :owner => self)
+      randx = rand(20) - 10
+      randy = rand(20) - 10
+      bomb = Bomb.new(:position => @hubs.first.position.dup, :velocity => Vector3D.new(randx, randy, 20), :owner => self)
       ShootOrder.new(:from => Vector3D.origin, :projectile => bomb, :direction => 0, :power => 10)
     end
 

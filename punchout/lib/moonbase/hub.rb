@@ -5,13 +5,11 @@ module Moonbase
     attr_accessor :selected
 
     def collision?(coords)
-      # d = sqrt(dx*dx + dy*dy + dh*dh)
-      # d2 = dx*dx + dy*dy + dh*dh
       dx = coords[0] - @position.x
       dy = coords[1] - @position.y
       dh = coords[2] - @position.h
-      d2 = dx*dx + dy*dy + dh*dh
-      p d2
+      dsquared = dx*dx + (dy*dy)*4 + dh*dh # TODO: think more about this
+      dsquared < 350.0
     end
   end
 end

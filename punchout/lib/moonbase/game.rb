@@ -39,16 +39,7 @@ module Moonbase
         :mouse_left => :on_mouse_click,
       })
       append_hook :owner => self, :trigger => EventTriggers::MouseMoveTrigger.new, :action => EventActions::MethodAction.new(:on_mouse_move)
-
-      create_test_bomb
-
       start
-    end
-
-    def create_test_bomb
-      @test_bomb = Bomb.new(:position => Vector3D.new(0, 0, 0), :velocity => Vector3D.new(0, 0, 0), :owner => @players.values.first)
-      view = BombView.new(@test_bomb, @map_view)
-      @sprite_group.push(view)
     end
 
     def players
@@ -173,7 +164,6 @@ module Moonbase
     end
 
     def on_turn_start
-      #puts 'on_turn_start'
       players.each{|p| p.on_turn_start(self) }
     end
 
@@ -237,39 +227,25 @@ module Moonbase
       add_player(p2)
       map = Map.new(:width => 100, :height => 100)
       self.map = map
-      h1 = Hub.new(:position => Vector3D.new(0, 0, 0), :owner => p1)
+      h1 = Hub.new(:position => Vector3D.new(500, 100, 0), :owner => p1)
       add_hub(h1)
-      h2 = Hub.new(:position => Vector3D.new(32, 32, 0), :owner => p2)
+      h2 = Hub.new(:position => Vector3D.new(450, 300, 0), :owner => p2)
       add_hub(h2)
-      b1 = Bomb.new(:position => Vector3D.new(0, 0, 0),
-                    :velocity => Vector3D.new(-4, 2, 20),
-                    :owner => p1)
-      add_bomb(b1)
     end
 
     def on_mouse_click(event)
-      get_hub_clicked(event.pos)
-    end
-
-    def on_mouse_move(event)
-      result = @map_view.surface_position(event.pos)
-      @test_bomb.position.x = result[0]
-      @test_bomb.position.y = result[1]
-    end
-
-    def get_hub_clicked(pos)
-      puts
-      puts
-      coords = @map_view.surface_position(pos)
-      coords[2] = 0
+      coords = @map_view.surface_position(event.pos)
+      coords[2] = 0 # ground is flat for now
       hubs.each do |hub|
         if hub.collision?(coords)
-          hub.selected = true
+          hub.selected = !hub.selected
         else
           hub.selected = false
         end
       end
-      puts
+    end
+
+    def on_mouse_move(event)
     end
 
     def check_collisions
@@ -287,6 +263,5 @@ module Moonbase
           :action => EventActions::MethodAction.new(:handle)
       end
     end
-
   end
 end
