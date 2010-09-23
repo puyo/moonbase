@@ -39,5 +39,8 @@ STEPS
 
 + Combined Game and GameController
 + Put player stuff in Player
-- Move all event handling into Game
-- Factor out Viewport
++ Move all event handling into Game
++ Factor out Viewport
+- Click on a hub to select it
+- Press a button to fire a bomb
+- Rotate angle to fire

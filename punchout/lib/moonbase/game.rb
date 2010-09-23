@@ -255,25 +255,26 @@ module Moonbase
       result = @map_view.surface_position(event.pos)
       @test_bomb.position.x = result[0]
       @test_bomb.position.y = result[1]
-      p @test_bomb.position
-      #@map_view.select_tile(event.pos)
     end
 
     def get_hub_clicked(pos)
       puts
       puts
-      coords = @map_view.viewport_to_surface_coordinate(*pos)
-      p pos
-      p coords
+      coords = @map_view.surface_position(pos)
+      coords[2] = 0
       hubs.each do |hub|
-        p hub
+        if hub.collision?(coords)
+          hub.selected = true
+        else
+          hub.selected = false
+        end
       end
       puts
     end
 
     def check_collisions
       bombs.each do |bomb|
-        if bomb.position.h < @map.height(bomb.position.x, bomb.position.y)
+        if bomb.position.h < @map.height_at([bomb.position.x, bomb.position.y])
           destroy_bomb(bomb)
         end
       end

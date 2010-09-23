@@ -16,13 +16,20 @@ module Moonbase
       @tile_size = 32
       @g = @tile_size
       @gh = @tile_size/2
-      #@scroll_x = -width*@g + 300
-      #@scroll_y = height*@gh/2
       @map = map
       @position = Vector3D.origin
       create_image
       draw_iso_tiles
+      draw_origin
+      #@viewport.scroll_x = 400
+      #@viewport.scroll_y = 200
       update_rect
+    end
+
+    def draw_origin
+      coords = draw_position([0, 0, 0])
+      p coords
+      @image.draw_circle_s(coords, 2, [1, 255, 1])
     end
 
     def update(ms)
@@ -32,19 +39,17 @@ module Moonbase
     end
 
     def draw_position(xy3d)
-      xy2d = @viewport.surface_to_viewport_coordinates(xy3d)
-      xy2d[0] += x_image_offset
-      xy2d
+      @viewport.surface_to_viewport_coordinates(xy3d)
     end
 
     def surface_position(xy2d)
-      @viewport.viewport_to_surface_coordinate([xy2d[0] - x_image_offset, xy2d[1]])
+      @viewport.viewport_to_surface_coordinate([xy2d[0], xy2d[1]])
     end
 
     private
 
     def x_image_offset
-      @image.size[0]/2 - @g
+      @image.size[0]/2
     end
 
     def width; 50 end
@@ -53,7 +58,7 @@ module Moonbase
     def create_image
       @image = Surface.new([(width + height)*@g, (width + height)*@gh], 0)
       @image.colorkey = [0, 0, 0]
-      @image.to_display_alpha rescue nil
+      @image.to_display_alpha
       @rect = @image.make_rect
     end
 
@@ -78,7 +83,8 @@ module Moonbase
     end
 
     def draw_iso_tile(i, j)
-      xy2d = draw_position([i*@tile_size, j*@tile_size])
+      xy2d = draw_position([i*@tile_size, j*@tile_size, 0])
+      xy2d[0] += x_image_offset - @g
       points = iso_tile_points(*xy2d)
       @image.draw_polygon_s(points, color(i, j))
       @image.draw_polygon(points, Color[:black])
@@ -94,7 +100,9 @@ module Moonbase
     end
 
     def update_rect
-      @rect.topleft = @viewport.surface_to_viewport_coordinates([@position.x, @position.y])
+      value = @viewport.surface_to_viewport_coordinates([@position.x, @position.y, 0])
+      value[0] -= x_image_offset
+      @rect.topleft = value
     end
   end
 end

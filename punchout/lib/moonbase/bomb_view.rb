@@ -12,7 +12,7 @@ module Moonbase
       @map_view = map_view
       @image = Surface.new([32, 32], 0)
       @image.colorkey = [0, 0, 0]
-      @image.to_display_alpha rescue nil
+      @image.to_display_alpha
       @image.draw_circle_s([16, 16], 8, @projectile.owner.color.map{|c| c/2 })
       @image.draw_circle([16, 16], 8, [255, 255, 255])
       @rect = @image.make_rect
@@ -26,7 +26,10 @@ module Moonbase
     private
 
     def update_rect
-      @rect.topleft = @map_view.draw_position([@projectile.position.x, @projectile.position.y])
+      value = @map_view.draw_position([@projectile.position.x, @projectile.position.y, @projectile.position.h])
+      value[0] -= @image.width/2
+      value[1] -= @image.height/2
+      @rect.topleft = value
     end
   end
 end

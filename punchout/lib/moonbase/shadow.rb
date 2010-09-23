@@ -15,14 +15,14 @@ module Moonbase
       @map_view = map_view
       @image = Surface.new([32, 32], 0)
       @image.colorkey = [0, 0, 0]
-      @image.to_display_alpha rescue nil
+      @image.to_display_alpha
       @rect = @image.make_rect
       redraw
       update_rect
     end
 
     def redraw
-      @height = @object.position.h - @map_view.map.height(@object.position.x, @object.position.y)
+      @height = @object.position.h - @map_view.map.height_at([@object.position.x, @object.position.y])
       @image.fill([0, 0, 0])
       if is_drawn?
         @image.draw_ellipse_s([16, 16], size, [1, 1, 1])
@@ -46,7 +46,10 @@ module Moonbase
     private
 
     def update_rect
-      @rect.topleft = @map_view.draw_position([@object.position.x, @object.position.y])
+      value = @map_view.draw_position([@object.position.x, @object.position.y, 0])
+      value[0] -= @image.width/2
+      value[1] -= @image.height/2
+      @rect.topleft = value
     end
   end
 end

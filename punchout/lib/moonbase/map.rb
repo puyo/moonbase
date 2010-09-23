@@ -7,11 +7,7 @@ module Moonbase
       @height = opts[:height] || 100
     end
 
-    def surface_coordinate(x, y)
-      Vector3D.new(x, y, height(x, y))
-    end
-
-    def height(x, y)
+    def height_at(xy)
       0 # flat, for now
     end
   end

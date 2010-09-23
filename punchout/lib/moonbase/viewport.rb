@@ -12,16 +12,15 @@ module Moonbase
       vx -= @scroll_x
       vy -= @scroll_y
       h = 0
-      sx = vx/2 + vy - h
-      sy = -vx/2 + vy - h
+      sx = vx/2 + vy + h
+      sy = -vx/2 + vy + h
       [sx, sy]
     end
 
     def surface_to_viewport_coordinates(coord)
-      sx, sy = coord
-      h = 0
+      sx, sy, h = coord
       vx = sx - sy
-      vy = (sx + sy)/2 + h
+      vy = (sx + sy)/2 - h
       [@scroll_x + vx, @scroll_y + vy]
     end
   end
