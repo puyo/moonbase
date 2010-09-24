@@ -238,6 +238,7 @@ module Moonbase
     end
 
     def on_mouse_click(event)
+      return unless @phase == OrdersPhase
       coords = @map_view.surface_position(event.pos)
       coords[2] = 0 # ground is flat for now
       @hotseat_player.hubs.each do |hub|
