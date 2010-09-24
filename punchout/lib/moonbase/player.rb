@@ -25,7 +25,7 @@ module Moonbase
     end
 
     def request_order(game)
-      game.set_order(self, random_order)
+      @order = random_order
     end
 
     def random_order
@@ -51,6 +51,10 @@ module Moonbase
       if building.is_a?(Hub) and @selected_building.nil?
         @selected_building = building
       end
+    end
+
+    def to_s
+      "<#Player #{@id}>"
     end
   end
 end

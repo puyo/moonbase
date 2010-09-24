@@ -13,17 +13,19 @@ require 'moonbase/orders_phase'
 require 'moonbase/move_phase'
 require 'moonbase/quit_phase'
 require 'moonbase/viewport'
+require 'moonbase/logger'
 require 'rubygame'
 
 module Moonbase
   class Game
     include Rubygame
     include EventHandler::HasEventHandler
+    include Moonbase::Logger
 
     attr_reader :map, :phase, :hubs, :bombs
 
     def initialize(opts = {})
-      @phase = CreatePhase
+      set_phase CreatePhase
       @mode = :hotseat
       @players = {}
       @map = nil
@@ -47,19 +49,19 @@ module Moonbase
     end
 
     def orders
-      players.map(&:order)
+      players.map(&:order).compact
     end
 
     def start
-      @phase = OrdersPhase
-      hotseat_start if @mode == :hotseat
+      start_turn
     end
 
     def hotseat_start
-      @hotseat_player = players.first
+      set_hotseat_player(players.first)
     end
 
     def set_hotseat_player(player)
+      logger.debug { "game.hotseat_player = #{player}" }
       @hotseat_player = player
     end
 
@@ -84,10 +86,13 @@ module Moonbase
         bomb.on_tick(milliseconds)
       end
       check_collisions
-      if not still_moving?
-        @phase = OrdersPhase
-        on_turn_start
-      end
+      start_turn if not still_moving?
+    end
+
+    def start_turn
+      set_phase OrdersPhase
+      hotseat_start if @mode == :hotseat
+      players.each{|p| p.on_turn_start(self) }
     end
 
     def still_moving?
@@ -96,21 +101,19 @@ module Moonbase
 
     def on_tick_orders(milliseconds)
       if @mode == :hotseat
-        order = @hotseat_player.request_order(self)
-        if order
-          set_order(@hotseat_player, order)
+        @hotseat_player.request_order(self)
+        if @hotseat_player.order
           next_player = players.find{|p| p.order.nil? }
           set_hotseat_player(next_player) if next_player
         end
       else
-        players.each do |p|
-          order = p.request_order(self)
-          set_order(p, order) if order
+        players.each do |player|
+          player.request_order(self)
         end
       end
       if not awaiting_orders?
-        @phase = MovePhase
         process_orders
+        set_phase MovePhase
       end
     end
 
@@ -159,12 +162,8 @@ module Moonbase
     def remove_player(player)
       @players.delete(player.id)
       if @players.empty?
-        @phase = QuitPhase
+        set_phase QuitPhase
       end
-    end
-
-    def on_turn_start
-      players.each{|p| p.on_turn_start(self) }
     end
 
     def map=(map)
@@ -175,6 +174,11 @@ module Moonbase
     end
 
     private
+
+    def set_phase(phase)
+      logger.debug { "game.phase = #{phase}" }
+      @phase = phase
+    end
 
     def create_sprite_group
       @sprite_group = Sprites::Group.new
@@ -236,7 +240,7 @@ module Moonbase
     def on_mouse_click(event)
       coords = @map_view.surface_position(event.pos)
       coords[2] = 0 # ground is flat for now
-      hubs.each do |hub|
+      @hotseat_player.hubs.each do |hub|
         if hub.collision?(coords)
           hub.selected = !hub.selected
         else
