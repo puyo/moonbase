@@ -5,11 +5,19 @@ module Moonbase
     attr_accessor :selected
 
     def collision?(coords)
-      dx = coords[0] - @position.x
-      dy = coords[1] - @position.y
-      dh = coords[2] - @position.h
-      dsquared = dx*dx + (dy*dy)*4 + dh*dh # TODO: think more about this
-      dsquared < 350.0
+      dsquared(coords) < 350.0
+    end
+
+    private
+
+    def dsquared(coords)
+      dsquared2(coords[0] - @position.x,
+                coords[1] - @position.y,
+                coords[2] - @position.h)
+    end
+
+    def dsquared2(dx, dy, dh)
+      dx*dx + (dy*dy)*4 + dh*dh # TODO: think more about this
     end
   end
 end

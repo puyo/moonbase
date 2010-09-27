@@ -30,6 +30,11 @@ module Moonbase
     end
 
     def redraw
+      redraw_selection
+      redraw_hub
+    end
+
+    def redraw_selection
       if @hub.selected
         if @t > 500
           i = 1000 - @t
@@ -41,6 +46,9 @@ module Moonbase
       else
         @image.fill([0, 0, 0])
       end
+    end
+
+    def redraw_hub
       @image.draw_ellipse_s([20, 16], [14, 7], [1, 1, 1])
       @image.draw_ellipse_s([20, 14], [14, 7], @color)
     end
@@ -48,10 +56,7 @@ module Moonbase
     private
 
     def update_rect
-      value = @map_view.draw_position([@hub.position.x, @hub.position.y, 0])
-      value[0] -= @image.width/2
-      value[1] -= @image.height/2
-      @rect.topleft = value
+      @rect.topleft = @map_view.image_position(@image, [@hub.position.x, @hub.position.y, 0])
     end
   end
 end

@@ -42,6 +42,13 @@ module Moonbase
       @viewport.surface_to_viewport_coordinates(xy3d)
     end
 
+    def image_position(image, xy3d)
+      coords = @viewport.surface_to_viewport_coordinates(xy3d)
+      coords[0] -= image.width/2
+      coords[1] -= image.height/2
+      coords
+    end
+
     def surface_position(xy2d)
       @viewport.viewport_to_surface_coordinate([xy2d[0], xy2d[1]])
     end

@@ -30,17 +30,13 @@ module Moonbase
       @players = {}
       @map = nil
       @hotseat_player = nil
-
       @bomb_views = Hash.new {|h, k| h[k] = [] }
+
       create_sprite_group
       create_game_demo
       create_pressed_hooks
       create_released_hooks
-      make_magic_hooks({
-        :tick => proc { |target, event| target.tick(event.milliseconds) },
-        :mouse_left => :on_mouse_click,
-      })
-      append_hook :owner => self, :trigger => EventTriggers::MouseMoveTrigger.new, :action => EventActions::MethodAction.new(:on_mouse_move)
+      create_other_hooks
       start
     end
 
@@ -101,19 +97,21 @@ module Moonbase
 
     def on_tick_orders(milliseconds)
       if @mode == :hotseat
-        @hotseat_player.request_order(self)
-        if @hotseat_player.order
-          next_player = players.find{|p| p.order.nil? }
-          set_hotseat_player(next_player) if next_player
-        end
+        on_tick_orders_hotseat(milliseconds)
       else
-        players.each do |player|
-          player.request_order(self)
-        end
+        raise "Mode #{@mode} not supported"
       end
       if not awaiting_orders?
         process_orders
         set_phase MovePhase
+      end
+    end
+
+    def on_tick_orders_hotseat(milliseconds)
+      @hotseat_player.request_order(self)
+      if @hotseat_player.order
+        next_player = players.find{|p| p.order.nil? }
+        set_hotseat_player(next_player) if next_player
       end
     end
 
@@ -182,6 +180,12 @@ module Moonbase
 
     def create_sprite_group
       @sprite_group = Sprites::Group.new
+      create_sprite_group_methods
+      create_sprite_group_hooks
+      add_sprite_hooks(@sprite_group)
+    end
+
+    def create_sprite_group_methods
       class << @sprite_group
         include Rubygame
         include EventHandler::HasEventHandler
@@ -194,12 +198,14 @@ module Moonbase
         end
       end
       @sprite_group.extend(Sprites::UpdateGroup)
+    end
+
+    def create_sprite_group_hooks
       @sprite_group.make_magic_hooks({
         Moonbase::Events::DrawSprites => :on_draw,
         Moonbase::Events::UndrawSprites => :on_undraw,
         :tick => proc { |group, event| group.each{|s| s.update(event.milliseconds) } },
       })
-      add_sprite_hooks(@sprite_group)
     end
 
     def create_pressed_hooks
@@ -220,21 +226,38 @@ module Moonbase
       })
     end
 
+    def create_other_hooks
+      make_magic_hooks({
+        :tick => proc { |target, event| target.tick(event.milliseconds) },
+        :mouse_left => :on_mouse_click,
+      })
+      append_hook :owner => self, :trigger => EventTriggers::MouseMoveTrigger.new, :action => EventActions::MethodAction.new(:on_mouse_move)
+    end
+
     def map_scroll_hook(coord, diff)
       proc { @map_view.send("#{coord}=", @map_view.send(coord) + diff) }
     end
 
     def create_game_demo
-      p1 = Moonbase::Player.new(:name => 'P1', :color => [255, 0, 0])
-      p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
-      add_player(p1)
-      add_player(p2)
-      map = Map.new(:width => 100, :height => 100)
-      self.map = map
-      h1 = Hub.new(:position => Vector3D.new(500, 100, 0), :owner => p1)
-      add_hub(h1)
-      h2 = Hub.new(:position => Vector3D.new(450, 300, 0), :owner => p2)
-      add_hub(h2)
+      demo_add_players
+      demo_set_map
+      demo_add_hubs
+    end
+
+    def demo_add_players
+      @demo_p1 = Moonbase::Player.new(:name => 'P1', :color => [255, 0, 0])
+      @demo_p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
+      add_player(@demo_p1)
+      add_player(@demo_p2)
+    end
+
+    def demo_add_hubs
+      add_hub Hub.new(:position => Vector3D.new(500, 100, 0), :owner => @demo_p1)
+      add_hub Hub.new(:position => Vector3D.new(450, 300, 0), :owner => @demo_p2)
+    end
+
+    def demo_set_map
+      self.map = Map.new(:width => 100, :height => 100)
     end
 
     def on_mouse_click(event)
