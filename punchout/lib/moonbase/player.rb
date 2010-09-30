@@ -6,7 +6,7 @@ module Moonbase
     START_ENERGY = 11
     BASE_ENERGY_PER_TURN = 7
 
-    attr_reader :name, :energy, :color, :selected_building, :hubs, :bombs
+    attr_reader :name, :energy, :color, :hubs, :bombs
     attr_accessor :id, :order
 
     def initialize(opts)
@@ -20,12 +20,12 @@ module Moonbase
       @order = nil
     end
 
-    def select_building(building)
-      @selected_building = building
+    def selected_building
+      @hubs.find{|h| h.selected }
     end
 
     def request_order(game)
-      @order = random_order
+      #@order = random_order
     end
 
     def random_order
@@ -45,12 +45,6 @@ module Moonbase
 
     def extra_energy_per_turn(game)
       0 # game.find_buildings(:owned_by => self, :type => Collector)...
-    end
-
-    def on_building_added(building)
-      if building.is_a?(Hub) and @selected_building.nil?
-        @selected_building = building
-      end
     end
 
     def to_s

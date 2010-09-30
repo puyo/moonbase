@@ -1,8 +1,12 @@
 source "http://rubygems.org"
 
-gem "rspec"
 gem "rubygame"
-gem "rake"
-gem "roodi"
-gem "flog"
-gem "flay"
+
+group :test do
+  gem "rspec"
+  gem "rcov"
+  gem "rake"
+  gem "roodi"
+  gem "flog"
+  gem "flay"
+end

@@ -2,7 +2,13 @@ require 'moonbase/building'
 
 module Moonbase
   class Hub < Building
-    attr_accessor :selected
+    attr_accessor :selected, :angle
+
+    def initialize(opts = {})
+      super(opts)
+      @selected = false
+      @angle = 0.0
+    end
 
     def collision?(coords)
       dsquared(coords) < 350.0

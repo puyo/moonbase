@@ -30,12 +30,16 @@ module Moonbase
       @players = {}
       @map = nil
       @hotseat_player = nil
+      @angle_delta = 0.0
+      @strength = 0
+      @strength_delta = 0
       @bomb_views = Hash.new {|h, k| h[k] = [] }
 
       create_sprite_group
       create_game_demo
-      create_pressed_hooks
-      create_released_hooks
+      create_scroll_hooks_pressed
+      create_scroll_hooks_released
+      create_keyboard_hooks
       create_other_hooks
       start
     end
@@ -57,7 +61,7 @@ module Moonbase
     end
 
     def set_hotseat_player(player)
-      logger.debug { "game.hotseat_player = #{player}" }
+      logger.debug { "game.hotseat_player = #{player.id}" }
       @hotseat_player = player
     end
 
@@ -108,7 +112,14 @@ module Moonbase
     end
 
     def on_tick_orders_hotseat(milliseconds)
-      @hotseat_player.request_order(self)
+      b = @hotseat_player.selected_building
+      if b
+        b.angle += @angle_delta
+        #@strength += @stength_delta
+      end
+
+      #@hotseat_player.request_order(self)
+
       if @hotseat_player.order
         next_player = players.find{|p| p.order.nil? }
         set_hotseat_player(next_player) if next_player
@@ -208,7 +219,7 @@ module Moonbase
       })
     end
 
-    def create_pressed_hooks
+    def create_scroll_hooks_pressed
       make_magic_hooks({
         :up    => map_scroll_hook(:vy, -1),
         :down  => map_scroll_hook(:vy,  1),
@@ -217,13 +228,31 @@ module Moonbase
       })
     end
 
-    def create_released_hooks
+    def create_scroll_hooks_released
       make_magic_hooks({
         Moonbase::Events.released(:up   ) => map_scroll_hook(:vy,  1),
         Moonbase::Events.released(:down ) => map_scroll_hook(:vy, -1),
         Moonbase::Events.released(:left ) => map_scroll_hook(:vx,  1),
         Moonbase::Events.released(:right) => map_scroll_hook(:vx, -1),
       })
+    end
+
+    def create_keyboard_hooks
+      stop_angle = proc { @angle_delta = 0 }
+      make_magic_hooks({
+        :comma => proc { @angle_delta = -0.1 },
+        :period => proc { @angle_delta = 0.1 },
+        Moonbase::Events.released(:comma) => stop_angle,
+        Moonbase::Events.released(:period) => stop_angle,
+        :space => proc { @strength = 0; @strength_delta = 1 },
+        Moonbase::Events.released(:space) => proc { @strength_delta = 0; record_order },
+      })
+    end
+
+    def record_order
+      b = @hotseat_player.selected_building
+      if b
+      end
     end
 
     def create_other_hooks
@@ -252,8 +281,8 @@ module Moonbase
     end
 
     def demo_add_hubs
-      add_hub Hub.new(:position => Vector3D.new(500, 100, 0), :owner => @demo_p1)
-      add_hub Hub.new(:position => Vector3D.new(450, 300, 0), :owner => @demo_p2)
+      add_hub(Hub.new(:position => Vector3D.new(500, 100, 0), :owner => @demo_p1))
+      add_hub(Hub.new(:position => Vector3D.new(450, 300, 0), :owner => @demo_p2))
     end
 
     def demo_set_map

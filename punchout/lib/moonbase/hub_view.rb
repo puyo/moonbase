@@ -35,6 +35,7 @@ module Moonbase
     end
 
     def redraw_selection
+      @image.fill([0, 0, 0])
       if @hub.selected
         if @t > 500
           i = 1000 - @t
@@ -43,8 +44,10 @@ module Moonbase
         end
         i = i * 255 / 500
         @image.draw_ellipse_s([20, 16], [18, 9], [i, 255, i])
-      else
-        @image.fill([0, 0, 0])
+        len = 20
+        p1 = [20, 16]
+        p2 = [p1[0] + len*Math.cos(@hub.angle), p1[1] + len*Math.sin(@hub.angle)/2]
+        @image.draw_line(p1, p2, [i, 255, i])
       end
     end
 
