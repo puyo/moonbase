@@ -115,7 +115,17 @@ module Moonbase
       b = @hotseat_player.selected_building
       if b
         b.angle += @angle_delta
-        #@strength += @stength_delta
+        while b.angle > 360.0
+          b.angle -= 360.0
+        end
+        while b.angle < 0
+          b.angle += 360.0
+        end
+        if @strength_delta > 0
+          if !@strength.nil? and !@strength_delta.nil?
+            @strength += @strength_delta
+          end
+        end
       end
 
       #@hotseat_player.request_order(self)
@@ -240,8 +250,8 @@ module Moonbase
     def create_keyboard_hooks
       stop_angle = proc { @angle_delta = 0 }
       make_magic_hooks({
-        :comma => proc { @angle_delta = -0.1 },
-        :period => proc { @angle_delta = 0.1 },
+        :comma => proc { @angle_delta = -4.0 },
+        :period => proc { @angle_delta = 4.0 },
         Moonbase::Events.released(:comma) => stop_angle,
         Moonbase::Events.released(:period) => stop_angle,
         :space => proc { @strength = 0; @strength_delta = 1 },

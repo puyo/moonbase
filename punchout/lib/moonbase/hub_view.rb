@@ -8,13 +8,13 @@ module Moonbase
 
     def initialize(hub, map_view)
       super()
+      @hub = hub
       @map_view = map_view
-      @image = Surface.new([40, 32], 0)
+      @image = Surface.new([100, 100], 0)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha
       @color = hub.owner.color
       @t = 0
-      @hub = hub
       @rect = @image.make_rect
       redraw
       update_rect
@@ -30,33 +30,39 @@ module Moonbase
     end
 
     def redraw
-      redraw_selection
+      @image.fill([0, 0, 0])
+      redraw_selection if @hub.selected
       redraw_hub
     end
 
+    private
+
+    def self.hub_bitmap
+      @hub_bitmap ||= Surface.load('data/hub.png')
+      @hub_bitmap.to_display_alpha
+      @hub_bitmap
+    end
+
+    def self.selection_base_bitmap
+      @selection_base_bitmap ||= Surface.load('data/selection.png')
+      @selection_base_bitmap.to_display_alpha
+      @selection_base_bitmap
+    end
+
     def redraw_selection
-      @image.fill([0, 0, 0])
-      if @hub.selected
-        if @t > 500
-          i = 1000 - @t
-        else
-          i = @t
-        end
-        i = i * 255 / 500
-        @image.draw_ellipse_s([20, 16], [18, 9], [i, 255, i])
-        len = 20
-        p1 = [20, 16]
-        p2 = [p1[0] + len*Math.cos(@hub.angle), p1[1] + len*Math.sin(@hub.angle)/2]
-        @image.draw_line(p1, p2, [i, 255, i])
-      end
+      angle = @hub.angle
+      zoom = [1, 0.5]
+      smooth = true
+      selection = self.class.selection_base_bitmap
+      selection = selection.rotozoom(angle, 1, smooth) # rotate
+      selection = selection.zoom(zoom, smooth) # zoom
+      selection.blit(@image, [(@image.width - selection.width)/2, (@image.height - selection.height)/2])
     end
 
     def redraw_hub
-      @image.draw_ellipse_s([20, 16], [14, 7], [1, 1, 1])
-      @image.draw_ellipse_s([20, 14], [14, 7], @color)
+      hub = self.class.hub_bitmap
+      hub.blit(@image, [(@image.width - hub.width)/2, (@image.height - hub.height)/2])
     end
-
-    private
 
     def update_rect
       @rect.topleft = @map_view.image_position(@image, [@hub.position.x, @hub.position.y, 0])

@@ -22,11 +22,12 @@ module Moonbase
     private
 
     def create_image
-      @image = Surface.new([32, 32], 0)
-      @image.colorkey = [0, 0, 0]
-      @image.to_display_alpha
-      @image.draw_circle_s([16, 16], 8, @projectile.owner.color.map{|c| c/2 })
-      @image.draw_circle([16, 16], 8, [255, 255, 255])
+      @image = Surface.load('data/bomb.png')
+      #@image = Surface.new([32, 32], 0)
+      #@image.colorkey = [0, 0, 0]
+      #@image.to_display_alpha
+      #@image.draw_circle_s([16, 16], 8, @projectile.owner.color.map{|c| c/2 })
+      #@image.draw_circle([16, 16], 8, [255, 255, 255])
     end
 
     def update_rect

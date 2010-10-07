@@ -10,7 +10,11 @@ task :test => %w[test:roodi test:flog test:flay test:rcov]
 
 desc 'Run the game'
 task :run do
-  system('rsdl main.rb') or system('ruby main.rb')
+  if system('which rsdl')
+    system('rsdl main.rb')
+  else 
+    system('ruby main.rb')
+  end
 end
 
 namespace :setup do
