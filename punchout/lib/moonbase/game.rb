@@ -1,19 +1,20 @@
-require 'moonbase/player'
-require 'moonbase/map'
-require 'moonbase/order'
-require 'moonbase/vector3d'
-require 'moonbase/map_view'
-require 'moonbase/hub'
-require 'moonbase/hub_view'
 require 'moonbase/bomb'
 require 'moonbase/bomb_view'
-require 'moonbase/shadow'
 require 'moonbase/create_phase'
-require 'moonbase/orders_phase'
-require 'moonbase/move_phase'
-require 'moonbase/quit_phase'
-require 'moonbase/viewport'
+require 'moonbase/hub'
+require 'moonbase/hub_view'
 require 'moonbase/logger'
+require 'moonbase/map'
+require 'moonbase/map_view'
+require 'moonbase/meter_view'
+require 'moonbase/move_phase'
+require 'moonbase/order'
+require 'moonbase/orders_phase'
+require 'moonbase/player'
+require 'moonbase/quit_phase'
+require 'moonbase/shadow'
+require 'moonbase/vector3d'
+require 'moonbase/viewport'
 require 'rubygame'
 
 module Moonbase
@@ -22,7 +23,7 @@ module Moonbase
     include EventHandler::HasEventHandler
     include Moonbase::Logger
 
-    attr_reader :map, :phase, :hubs, :bombs
+    attr_reader :map, :phase, :hubs, :bombs, :hotseat_player
 
     def initialize(opts = {})
       set_phase CreatePhase
@@ -31,12 +32,13 @@ module Moonbase
       @map = nil
       @hotseat_player = nil
       @angle_delta = 0.0
-      @strength = 0
-      @strength_delta = 0
+      @power = 0
+      @power_delta = 0
       @bomb_views = Hash.new {|h, k| h[k] = [] }
 
       create_sprite_group
       create_game_demo
+      create_ui
       create_scroll_hooks_pressed
       create_scroll_hooks_released
       create_keyboard_hooks
@@ -121,14 +123,10 @@ module Moonbase
         while b.angle < 0
           b.angle += 360.0
         end
-        if @strength_delta > 0
-          if !@strength.nil? and !@strength_delta.nil?
-            @strength += @strength_delta
-          end
+        if @power_delta != 0
+          set_power(@power + @power_delta)
         end
       end
-
-      #@hotseat_player.request_order(self)
 
       if @hotseat_player.order
         next_player = players.find{|p| p.order.nil? }
@@ -154,23 +152,23 @@ module Moonbase
 
     def add_hub(hub)
       hub.owner.hubs.push(hub)
-      view = HubView.new(hub, @map_view)
+      view = HubView.new(self, hub, @map_view)
       @sprite_group.push(view)
     end
 
     def add_bomb(bomb)
       bomb.owner.bombs.push(bomb)
-      shadow = Shadow.new(bomb, @map_view)
-      @sprite_group.push(shadow)
       view = BombView.new(bomb, @map_view)
-      @sprite_group.push(view)
-      @bomb_views[bomb].push view, shadow
+      @sprite_group.push(view.bomb_sprite)
+      @sprite_group.push(view.shadow_sprite)
+      @bomb_views[bomb].push view #, shadow
     end
 
     def destroy_bomb(bomb)
       bomb.owner.bombs.delete(bomb)
-      @bomb_views[bomb].each do |sprite|
-        @sprite_group.delete(sprite)
+      @bomb_views[bomb].each do |view|
+        @sprite_group.delete(view.bomb_sprite)
+        @sprite_group.delete(view.shadow_sprite)
       end
     end
 
@@ -204,6 +202,11 @@ module Moonbase
       create_sprite_group_methods
       create_sprite_group_hooks
       add_sprite_hooks(@sprite_group)
+    end
+
+    def create_ui
+      @meter_view = MeterView.new
+      @sprite_group.push(@meter_view)
     end
 
     def create_sprite_group_methods
@@ -250,19 +253,43 @@ module Moonbase
     def create_keyboard_hooks
       stop_angle = proc { @angle_delta = 0 }
       make_magic_hooks({
-        :comma => proc { @angle_delta = -4.0 },
-        :period => proc { @angle_delta = 4.0 },
+        :comma => proc { @angle_delta = 4.0 },
+        :period => proc { @angle_delta = -4.0 },
         Moonbase::Events.released(:comma) => stop_angle,
         Moonbase::Events.released(:period) => stop_angle,
-        :space => proc { @strength = 0; @strength_delta = 1 },
-        Moonbase::Events.released(:space) => proc { @strength_delta = 0; record_order },
+        :space => proc { @power = 0; @power_delta = 4 },
+        Moonbase::Events.released(:space) => :record_order,
       })
     end
 
-    def record_order
-      b = @hotseat_player.selected_building
-      if b
+    def set_power(value)
+      if value > 100
+        value = 100
+        @power_delta = -@power_delta
       end
+      if value < 0
+        value = 0
+        @power_delta = -@power_delta
+      end
+      @power = @meter_view.level = value
+    end
+
+    def record_order
+      @power_delta = 0
+      if @power > 0
+        b = @hotseat_player.selected_building
+        if b
+          p "Firing at angle: #{b.angle}"
+          vel = Vector3D.new(Math.cos(deg_to_rad(b.angle)), Math.sin(deg_to_rad(b.angle)), 1.0).multiply_by(@power)
+          bomb = Bomb.new(:owner => @hotseat_player, :position => b.position, :velocity => vel)
+          @hotseat_player.order = ShootOrder.new(:projectile => bomb)
+        end
+        set_power 0
+      end
+    end
+
+    def deg_to_rad(angle)
+      angle * 2 * Math::PI / 360.0
     end
 
     def create_other_hooks
@@ -285,14 +312,14 @@ module Moonbase
 
     def demo_add_players
       @demo_p1 = Moonbase::Player.new(:name => 'P1', :color => [255, 0, 0])
-      @demo_p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
+      #@demo_p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
       add_player(@demo_p1)
-      add_player(@demo_p2)
+      #add_player(@demo_p2)
     end
 
     def demo_add_hubs
       add_hub(Hub.new(:position => Vector3D.new(500, 100, 0), :owner => @demo_p1))
-      add_hub(Hub.new(:position => Vector3D.new(450, 300, 0), :owner => @demo_p2))
+      #add_hub(Hub.new(:position => Vector3D.new(450, 300, 0), :owner => @demo_p2))
     end
 
     def demo_set_map

@@ -1,4 +1,3 @@
-require 'moonbase/events'
 require 'rubygame'
 
 module Moonbase
@@ -6,8 +5,9 @@ module Moonbase
     include Rubygame
     include Sprites::Sprite
 
-    def initialize(hub, map_view)
+    def initialize(game, hub, map_view)
       super()
+      @game = game
       @hub = hub
       @map_view = map_view
       @image = Surface.new([100, 100], 0)
@@ -31,7 +31,7 @@ module Moonbase
 
     def redraw
       @image.fill([0, 0, 0])
-      redraw_selection if @hub.selected
+      redraw_selection if @hub.selected and @game.hotseat_player == @hub.owner
       redraw_hub
     end
 
@@ -50,7 +50,7 @@ module Moonbase
     end
 
     def redraw_selection
-      angle = @hub.angle
+      angle = @hub.angle + 180.0
       zoom = [1, 0.5]
       smooth = true
       selection = self.class.selection_base_bitmap

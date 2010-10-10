@@ -24,10 +24,6 @@ module Moonbase
       @hubs.find{|h| h.selected }
     end
 
-    def request_order(game)
-      #@order = random_order
-    end
-
     def random_order
       randx = rand(20) - 10
       randy = rand(20) - 10

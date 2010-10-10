@@ -6,6 +6,7 @@ module Moonbase
       @position = opts[:position] || raise('Must specify projectile position')
       @velocity = opts[:velocity] || raise('Must specify projectile velocity')
       @owner = opts[:owner] || raise('Must specify projectile owner')
+      @position = @position.dup
     end
 
     def on_tick(milliseconds)
