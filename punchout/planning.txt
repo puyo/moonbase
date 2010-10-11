@@ -1,0 +1,23 @@
+PLAN
+====
+
++ Combine Game and GameController
++ Put all player stuff in Player (bombs, hubs)
++ Encapsulate Rubgame event handling in Game
++ Factor out Viewport
++ Click on a hub to select it
++ Sprites loaded from image files
++ Press a button to fire a bomb
++ Rotate angle to fire
+
+- Try Gosu? Texplay?
+- 100% spec coverage, metrics
+- Sprite image colouring with player colours
+- Bombs damage things they land on
+- Hub health meters
+- Hub destruction
+- UI to select what to fire
+- Fire hubs
+- Building chain links
+- Terrain height
+- Terrain edge wrapping
