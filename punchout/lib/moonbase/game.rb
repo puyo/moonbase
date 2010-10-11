@@ -12,7 +12,6 @@ require 'moonbase/order'
 require 'moonbase/orders_phase'
 require 'moonbase/player'
 require 'moonbase/quit_phase'
-require 'moonbase/shadow'
 require 'moonbase/vector3d'
 require 'moonbase/viewport'
 require 'rubygame'
@@ -280,7 +279,9 @@ module Moonbase
         b = @hotseat_player.selected_building
         if b
           p "Firing at angle: #{b.angle}"
-          vel = Vector3D.new(Math.cos(deg_to_rad(b.angle)), Math.sin(deg_to_rad(b.angle)), 1.0).multiply_by(@power)
+          a = -b.angle - 45.0
+          scale = (@power/10.0) + 5
+          vel = Vector3D.new(Math.cos(deg_to_rad(a)), Math.sin(deg_to_rad(a)), 1.0).multiply_by(scale)
           bomb = Bomb.new(:owner => @hotseat_player, :position => b.position, :velocity => vel)
           @hotseat_player.order = ShootOrder.new(:projectile => bomb)
         end
