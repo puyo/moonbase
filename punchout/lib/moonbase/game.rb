@@ -312,7 +312,7 @@ module Moonbase
     end
 
     def demo_add_players
-      @demo_p1 = Moonbase::Player.new(:name => 'P1', :color => [255, 0, 0])
+      @demo_p1 = Moonbase::Player.new(:name => 'P1', :color => [127, 200, 255])
       #@demo_p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
       add_player(@demo_p1)
       #add_player(@demo_p2)

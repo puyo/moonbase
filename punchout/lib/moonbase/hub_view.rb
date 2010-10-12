@@ -1,4 +1,5 @@
 require 'rubygame'
+require 'moonbase/recolour'
 
 module Moonbase
   class HubView
@@ -13,7 +14,6 @@ module Moonbase
       @image = Surface.new([100, 100], 0)
       @image.colorkey = [0, 0, 0]
       @image.to_display_alpha
-      @color = hub.owner.color
       @t = 0
       @rect = @image.make_rect
       redraw
@@ -37,14 +37,16 @@ module Moonbase
 
     private
 
-    def self.hub_bitmap
-      @hub_bitmap ||= Surface.load('data/hub.png')
+    def self.hub_bitmap(color)
+      return @hub_bitmap if defined? @hub_bitmap
+      @hub_bitmap = Surface.load('data/hub.png')
       @hub_bitmap.to_display_alpha
-      @hub_bitmap
+      Recolour.recolour(@hub_bitmap, color)
     end
 
     def self.selection_base_bitmap
-      @selection_base_bitmap ||= Surface.load('data/selection.png')
+      return @selection_base_bitmap if defined? @selection_base_bitmap
+      @selection_base_bitmap = Surface.load('data/selection.png')
       @selection_base_bitmap.to_display_alpha
       @selection_base_bitmap
     end
@@ -60,7 +62,7 @@ module Moonbase
     end
 
     def redraw_hub
-      hub = self.class.hub_bitmap
+      hub = self.class.hub_bitmap(@hub.owner.color)
       hub.blit(@image, [(@image.width - hub.width)/2, (@image.height - hub.height)/2])
     end
 
