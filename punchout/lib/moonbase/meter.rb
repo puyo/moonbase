@@ -8,9 +8,13 @@ module Moonbase
     end
 
     def draw
-      #draw_quad (x1, y1, c1, x2, y2, c2, x3, y3, c3, x4, y4, c4, z=0, mode=:default)
-      #@image.draw_box_s([0, 100 - @level], @image.size, [0, 255, 0])
-      #@image.draw_box([0, 0], [@image.width - 1, @image.height - 1], [255, 255,
+      w = 20
+      h = @level
+      c = 0xff00ff00
+      game.window.draw_quad(0, 0, c,
+                            w, 0, c,
+                            w, h, c,
+                            0, h, c)
     end
 
     def update
