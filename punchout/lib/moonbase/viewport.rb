@@ -1,16 +1,15 @@
 module Moonbase
   class Viewport
-    attr_accessor :scroll_x, :scroll_y
+    attr_accessor :x, :y, :dx, :dy
 
-    def initialize(tile_size = 32)
-      @scroll_x = 0
-      @scroll_y = 0
+    def initialize(opts = nil)
+      opts ||= {}
+      @window = opts[:window]
+      @x = @y = @dx = @dy = 0
     end
 
     def viewport_to_surface_coordinate(coord)
       vx, vy = coord
-      vx -= @scroll_x
-      vy -= @scroll_y
       h = 0
       sx = vx/2 + vy + h
       sy = -vx/2 + vy + h
@@ -21,7 +20,16 @@ module Moonbase
       sx, sy, h = coord
       vx = sx - sy
       vy = (sx + sy)/2 - h
-      [@scroll_x + vx, @scroll_y + vy]
+      [vx, vy]
+    end
+
+    def translate_draw(&block)
+      @window.translate(@x, @y, &block)
+    end
+
+    def update
+      @x += @dx
+      @y += @dy
     end
   end
 end

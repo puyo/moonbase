@@ -1,13 +1,14 @@
-source "http://rubygems.org"
+source 'http://rubygems.org'
 
-#gem "rubygame"
-gem "gosu"
+gem 'gosu'
+gem 'hash-to-ostruct'
 
 group :test do
-  gem "rspec"
-  gem "rcov"
-  gem "rake"
-  gem "roodi"
-  gem "flog"
-  gem "flay"
+  gem 'ruby-debug19'
+  gem 'rspec'
+  gem 'rcov'
+  gem 'rake'
+  gem 'roodi'
+  gem 'flog'
+  gem 'flay'
 end

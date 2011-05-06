@@ -1,0 +1,60 @@
+= TODO
+
++ Click on a hub to select it
++ Hotseat play
+- Bombs damage things they land on
+- Hub health meters
+- Hub destruction
+- UI to select what to fire
+- Fire hubs
+- Chain links
+- Unit tests, code metrics
+- Terrain height
+- Terrain edge wrapping
+
+= MULTIPLAYER
+
+First
+
+  Game
+    map
+    hubs
+    players
+    viewport
+    hud
+    minimap
+    #draw
+      viewport.translate_drawing { map.draw }
+      minimap.draw
+      hud.draw
+    #update
+      move stuff
+
+Then...
+
+  Game
+    map
+    hubs
+    players
+
+  GameClient <-> push/pull state with server game
+    include Game
+
+    #draw
+      viewport.translate_drawing { map.draw }
+      minimap.draw
+      hud.draw
+
+    #update
+      ... talk to server if necessary ...
+
+    viewport
+    hud
+    minimap
+
+  GameServer
+    include Game
+
+    #update
+      move stuff
+      ... talk to clients if necessary ...

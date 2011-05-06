@@ -6,15 +6,41 @@ module Moonbase
 
     def initialize(opts = {})
       super(opts)
-      @selected = false
+      @selected = true
       @angle = 0.0
     end
 
+    def draw
+      x, y = game.viewport.surface_to_viewport_coordinates([@position.x, @position.y, @position.h])
+      image.draw(x - image.width/2,
+                 y - image.height/2,
+                 10, 1, 1, Gosu::Color.rgba(*(owner.color + [0xff])))
+      #return unless selected
+      game.window.scale(1, 0.5, x, y) do
+        game.window.rotate(@angle, x, y) do
+          selection_image.draw(x - selection_image.width/2,
+                               y - selection_image.height/2,
+                               9, 1, 1, 0xff00ff00)
+        end
+      end
+    end
+
+    def update
+    end
+
     def collision?(coords)
-      dsquared(coords) < 350.0
+      dsquared(coords) < 350.0 # roughly, size squared
     end
 
     private
+
+    def image
+      @image ||= Gosu::Image.new(game.window, 'data/hub_gosu.png')
+    end
+
+    def selection_image
+      @selection_image ||= Gosu::Image.new(game.window, 'data/selection_gosu.png')
+    end
 
     def dsquared(coords)
       dsquared2(coords[0] - @position.x,

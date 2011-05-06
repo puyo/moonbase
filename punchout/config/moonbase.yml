@@ -1,0 +1,7 @@
+---
+keyboard:
+  speed:
+    scroll: 4
+    rotate: 4
+physics:
+  gravity: 0.5
