@@ -1,4 +1,0 @@
-moonbase:
-
-%:
-	$(MAKE) -C src $*

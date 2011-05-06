@@ -58,3 +58,42 @@ Then...
     #update
       move stuff
       ... talk to clients if necessary ...
+
+= Calculations
+
+       + A
+      / \
+     /   \
+    + C   + B
+     \   /
+      \ /
+       + D
+    
+    2d_x = x - y
+    2d_y = (x + y - h)/2
+    
+    2d = (x - y, (x + y - h)/2)
+    
+    A = (0, 0, 0)
+    A2d = (0, 0)
+    
+    B = (10, 0, 0)
+    B2d = (10, 10)
+    
+    C = (0, 10, 0)
+    C2d = (-10, 10)
+    
+    D = (10, 10, 0)
+    D2d = (0, 20)
+    
+    2d = (2d_x, 2d_y)
+    x - y = 2d_x
+    x + y = 2d_y
+    x = (2d_x + 2d_y)/2
+    y = (2d_y - 2d_x)/2
+
+    x - y = 2d_x
+    x + y - h = 2d_y
+
+    x = (2d_x + 2d_y + h)/2
+    y = (2d_y - 2d_x + h)/2
