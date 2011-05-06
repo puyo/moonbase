@@ -33,16 +33,16 @@ module Moonbase
     attr_reader :map, :phase, :hubs, :bombs, :window, :viewport
 
     def initialize(opts = {})
-      set_phase CreatePhase
+      self.phase = CreatePhase
       @window = opts[:window]
       @mode = @hotseat = HotseatMode.new
+      @viewport = Viewport.new(:game => self)
+      @meter = Meter.new(:game => self)
       @player_map = {}
       @map = nil
-      @viewport = Viewport.new(:window => @window)
-      @angle_delta = 0.0
       @power = 0
       @power_delta = 0
-      @meter = Meter.new(:window => @window)
+      @angle_delta = 0.0
 
       demo
       start
@@ -54,7 +54,7 @@ module Moonbase
       add_player p1
       #add_player p2
       add_hub Hub.new(:position => Vector3D.new(500, 100, 0), :owner => p1)
-      self.map = Map.new(:width => 100, :height => 100)
+      @map = Map.new(:game => self, :width => 100, :height => 100)
     end
 
     def draw
@@ -139,7 +139,7 @@ module Moonbase
     end
 
     def start_turn
-      set_phase OrdersPhase
+      self.phase = OrdersPhase
       hotseat_start if @mode === @hotseat
       players.each{|p| p.on_turn_start(self) }
     end
@@ -152,7 +152,7 @@ module Moonbase
       send(@mode.class::METHOD)
       if not awaiting_orders?
         process_orders
-        set_phase MovePhase
+        self.phase = MovePhase
       end
     end
 
@@ -167,7 +167,7 @@ module Moonbase
           b.angle += 360.0
         end
         if @power_delta != 0
-          set_power(@power + @power_delta)
+          self.power =(@power + @power_delta)
         end
       end
 
@@ -213,26 +213,21 @@ module Moonbase
 
     def remove_player(player)
       @player_map.delete(player.id)
-      set_phase QuitPhase if @player_map.empty?
-    end
-
-    def map=(map)
-      @map = map
-      @map.game = self
-      @map.window = window
+      self.phase = QuitPhase if @player_map.empty?
     end
 
     private
 
-    def set_phase(phase)
+    def self.deg_to_rad(angle)
+      angle * 2 * Math::PI / 360.0
+    end
+
+    def phase=(phase)
       logger.debug { "game.phase = #{phase}" }
       @phase = phase
     end
 
-    def create_ui
-    end
-
-    def set_power(value)
+    def power=(value)
       if value > 100
         value = 100
         @power_delta = -@power_delta
@@ -250,18 +245,14 @@ module Moonbase
         b = @hotseat.player.selected_building
         if b
           p "Firing at angle: #{b.angle}"
-          a = -b.angle - 45.0
+          a = b.angle - 45.0
           scale = (@power/10.0) + 5
-          vel = Vector3D.new(Math.cos(deg_to_rad(a)), Math.sin(deg_to_rad(a)), 1.0).multiply_by(scale)
+          vel = Vector3D.new(Math.cos(self.class.deg_to_rad(a)), Math.sin(self.class.deg_to_rad(a)), 1.0).multiply_by(scale)
           bomb = Bomb.new(:owner => @hotseat.player, :position => b.position, :velocity => vel)
           @hotseat.player.order = ShootOrder.new(:projectile => bomb)
         end
-        set_power 0
+        self.power = 0
       end
-    end
-
-    def deg_to_rad(angle)
-      angle * 2 * Math::PI / 360.0
     end
 
     def check_collisions

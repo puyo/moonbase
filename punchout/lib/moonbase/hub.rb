@@ -17,7 +17,7 @@ module Moonbase
                  10, 1, 1, Gosu::Color.rgba(*(owner.color + [0xff])))
       #return unless selected
       game.window.scale(1, 0.5, x, y) do
-        game.window.rotate(@angle, x, y) do
+        game.window.rotate(@angle + 180, x, y) do
           selection_image.draw(x - selection_image.width/2,
                                y - selection_image.height/2,
                                9, 1, 1, 0xff00ff00)
