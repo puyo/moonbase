@@ -37,6 +37,8 @@ module Moonbase
       @window = opts[:window]
       @mode = @hotseat = HotseatMode.new
       @viewport = Viewport.new(:game => self)
+      @viewport.x = @window.width/2
+      #@viewport.y = @window.height/2
       @meter = Meter.new(:game => self)
       @player_map = {}
       @map = nil
@@ -53,7 +55,7 @@ module Moonbase
       #p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
       add_player p1
       #add_player p2
-      add_hub Hub.new(:position => Vector3D.new(500, 100, 0), :owner => p1)
+      add_hub Hub.new(:position => Vector3D.new(200, 200, 0), :owner => p1)
       @map = Map.new(:game => self, :width => 100, :height => 100)
     end
 
@@ -244,7 +246,6 @@ module Moonbase
       if @power > 0
         b = @hotseat.player.selected_building
         if b
-          p "Firing at angle: #{b.angle}"
           a = b.angle - 45.0
           scale = (@power/10.0) + 5
           vel = Vector3D.new(Math.cos(self.class.deg_to_rad(a)), Math.sin(self.class.deg_to_rad(a)), 1.0).multiply_by(scale)

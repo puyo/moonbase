@@ -1,7 +1,7 @@
 = TODO
 
-+ Click on a hub to select it
-+ Hotseat play
+- Click on a hub to select it
+- Hotseat play
 - Bombs damage things they land on
 - Hub health meters
 - Hub destruction

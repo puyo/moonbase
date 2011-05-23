@@ -28,6 +28,10 @@ module Moonbase
       return close if id == Gosu::KbEscape
       @game.button_up(id)
     end
+
+    def needs_cursor?
+      true
+    end
   end
 end
 
