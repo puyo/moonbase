@@ -1,8 +1,14 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    archive-tar-minitar (0.5.2)
-    columnize (0.3.2)
+    coderay (1.0.9)
+    columnize (0.3.6)
+    debugger (1.5.0)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.0)
+    debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.0)
     diff-lcs (1.1.2)
     flay (1.4.2)
       ruby_parser (~> 2.0)
@@ -10,10 +16,23 @@ GEM
     flog (2.5.1)
       ruby_parser (~> 2.0)
       sexp_processor (~> 3.0)
-    gosu (0.7.31)
+    gosu (0.7.45)
+    guard (1.6.2)
+      listen (>= 0.6.0)
+      lumberjack (>= 1.0.2)
+      pry (>= 0.9.10)
+      terminal-table (>= 1.4.3)
+      thor (>= 0.14.6)
+    guard-rspec (1.2.1)
+      guard (>= 1.1)
     hash-to-ostruct (0.0.1)
-    linecache19 (0.5.12)
-      ruby_core_source (>= 0.1.4)
+    listen (0.7.3)
+    lumberjack (1.0.3)
+    method_source (0.8.1)
+    pry (0.9.12)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
     rake (0.8.7)
     rcov (0.9.9)
     roodi (2.1.0)
@@ -26,30 +45,25 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
-    ruby-debug-base19 (0.11.25)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby_core_source (>= 0.1.4)
-    ruby-debug19 (0.11.6)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby-debug-base19 (>= 0.11.19)
-    ruby_core_source (0.1.5)
-      archive-tar-minitar (>= 0.5.2)
     ruby_parser (2.0.6)
       sexp_processor (~> 3.0)
     sexp_processor (3.0.5)
+    slop (3.4.4)
+    terminal-table (1.4.5)
+    thor (0.17.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  debugger
   flay
   flog
   gosu
+  guard
+  guard-rspec
   hash-to-ostruct
   rake
   rcov
   roodi
   rspec
-  ruby-debug19

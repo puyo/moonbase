@@ -27,10 +27,13 @@ module Moonbase
   end
 
   class Game
-    include Gosu
     include Moonbase::Logger
 
     attr_reader :map, :phase, :hubs, :bombs, :window, :viewport
+
+    attr_accessor :power_delta
+    attr_accessor :angle_delta
+    attr_accessor :power
 
     def initialize(opts = {})
       self.phase = CreatePhase
@@ -52,10 +55,11 @@ module Moonbase
 
     def demo
       p1 = Moonbase::Player.new(:name => 'P1', :color => [127, 200, 255])
-      #p2 = Moonbase::Player.new(:name => 'P2', :color => [64, 64, 255])
+      p2 = Moonbase::Player.new(:name => 'P2', :color => [255, 64, 0])
       add_player p1
-      #add_player p2
+      add_player p2
       add_hub Hub.new(:position => Vector3D.new(200, 200, 0), :owner => p1)
+      add_hub Hub.new(:position => Vector3D.new(250, 100, 0), :owner => p2)
       @map = Map.new(:game => self, :width => 100, :height => 100)
     end
 
@@ -66,38 +70,6 @@ module Moonbase
         bombs.each(&:draw)
       end
       @meter.draw
-    end
-
-    def button_down(id)
-      case id
-      when Gosu::KbUp then @viewport.dy -= Config.keyboard.speed.scroll
-      when Gosu::KbDown then @viewport.dy += Config.keyboard.speed.scroll
-      when Gosu::KbLeft then @viewport.dx -= Config.keyboard.speed.scroll
-      when Gosu::KbRight then @viewport.dx += Config.keyboard.speed.scroll
-      when Gosu::KbSpace then @power = 0; @power_delta = 4
-      when kb_comma then @angle_delta -= Config.keyboard.speed.rotate
-      when kb_period then @angle_delta += Config.keyboard.speed.rotate
-      end
-    end
-
-    def button_up(id)
-      case id
-      when Gosu::KbUp then @viewport.dy += Config.keyboard.speed.scroll
-      when Gosu::KbDown then @viewport.dy -= Config.keyboard.speed.scroll
-      when Gosu::KbLeft then @viewport.dx += Config.keyboard.speed.scroll
-      when Gosu::KbRight then @viewport.dx -= Config.keyboard.speed.scroll
-      when Gosu::KbSpace then record_order
-      when kb_comma then @angle_delta += Config.keyboard.speed.rotate
-      when kb_period then @angle_delta -= Config.keyboard.speed.rotate
-      end
-    end
-
-    def kb_comma
-      @kb_comma ||= window.char_to_button_id(',')
-    end
-
-    def kb_period
-      @kb_period ||= window.char_to_button_id('.')
     end
 
     def players
@@ -218,17 +190,6 @@ module Moonbase
       self.phase = QuitPhase if @player_map.empty?
     end
 
-    private
-
-    def self.deg_to_rad(angle)
-      angle * 2 * Math::PI / 360.0
-    end
-
-    def phase=(phase)
-      logger.debug { "game.phase = #{phase}" }
-      @phase = phase
-    end
-
     def power=(value)
       if value > 100
         value = 100
@@ -254,6 +215,17 @@ module Moonbase
         end
         self.power = 0
       end
+    end
+
+    private
+
+    def self.deg_to_rad(angle)
+      angle * 2 * Math::PI / 360.0
+    end
+
+    def phase=(phase)
+      logger.debug { "game.phase = #{phase}" }
+      @phase = phase
     end
 
     def check_collisions

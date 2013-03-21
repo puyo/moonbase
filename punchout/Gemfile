@@ -4,7 +4,9 @@ gem 'gosu'
 gem 'hash-to-ostruct'
 
 group :test do
-  gem 'ruby-debug19'
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'debugger'
   gem 'rspec'
   gem 'rcov'
   gem 'rake'
