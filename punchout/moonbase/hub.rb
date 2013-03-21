@@ -14,7 +14,7 @@ module Moonbase
       x, y = game.viewport.surface_to_viewport_coordinates([@position.x, @position.y, @position.h])
       image.draw(x - image.width/2,
                  y - image.height/2,
-                 10, 1, 1, Gosu::Color.rgba(*(owner.color + [0xff])))
+                 10, 1, 1, Moonbase.rgba(*(owner.color + [0xff])))
       #return unless selected
       game.window.scale(1, 0.5, x, y) do
         game.window.rotate(@angle + 180, x, y) do
@@ -35,11 +35,11 @@ module Moonbase
     private
 
     def image
-      @image ||= Gosu::Image.new(game.window, 'data/hub_gosu.png')
+      @image ||= Moonbase.image(game.window, 'data/hub_gosu.png')
     end
 
     def selection_image
-      @selection_image ||= Gosu::Image.new(game.window, 'data/selection_gosu.png')
+      @selection_image ||= Moonbase.image(game.window, 'data/selection_gosu.png')
     end
 
     def dsquared(coords)

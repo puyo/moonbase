@@ -1,14 +1,3 @@
-require 'moonbase/bomb'
-require 'moonbase/hub'
-require 'moonbase/logger'
-require 'moonbase/map'
-require 'moonbase/order'
-require 'moonbase/player'
-require 'moonbase/vector3d'
-require 'moonbase/viewport'
-require 'moonbase/meter'
-require 'moonbase/config'
-
 module Moonbase
   class Phase; end
   class CreatePhase < Phase; end
@@ -39,10 +28,6 @@ module Moonbase
       self.phase = CreatePhase
       @window = opts[:window]
       @mode = @hotseat = HotseatMode.new
-      @viewport = Viewport.new(:game => self)
-      @viewport.x = @window.width/2
-      #@viewport.y = @window.height/2
-      @meter = Meter.new(:game => self)
       @player_map = {}
       @map = nil
       @power = 0
@@ -61,15 +46,6 @@ module Moonbase
       add_hub Hub.new(:position => Vector3D.new(200, 200, 0), :owner => p1)
       add_hub Hub.new(:position => Vector3D.new(250, 100, 0), :owner => p2)
       @map = Map.new(:game => self, :width => 100, :height => 100)
-    end
-
-    def draw
-      @viewport.translate_draw do
-        @map.draw
-        hubs.each(&:draw)
-        bombs.each(&:draw)
-      end
-      @meter.draw
     end
 
     def players
@@ -95,7 +71,6 @@ module Moonbase
 
     def update
       send(@phase::METHOD)
-      @viewport.update
     end
 
     def bombs
@@ -141,7 +116,7 @@ module Moonbase
           b.angle += 360.0
         end
         if @power_delta != 0
-          self.power =(@power + @power_delta)
+          self.power = @power + @power_delta
         end
       end
 
@@ -199,7 +174,7 @@ module Moonbase
         value = 0
         @power_delta = -@power_delta
       end
-      @power = @meter.level = value
+      @power = value
     end
 
     def record_order

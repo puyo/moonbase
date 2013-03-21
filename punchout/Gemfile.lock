@@ -29,12 +29,12 @@ GEM
     listen (0.7.3)
     lumberjack (1.0.3)
     method_source (0.8.1)
+    multi_json (1.6.1)
     pry (0.9.12)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
     rake (0.8.7)
-    rcov (0.9.9)
     roodi (2.1.0)
       ruby_parser
     rspec (2.5.0)
@@ -48,6 +48,10 @@ GEM
     ruby_parser (2.0.6)
       sexp_processor (~> 3.0)
     sexp_processor (3.0.5)
+    simplecov (0.7.1)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.7.1)
+    simplecov-html (0.7.1)
     slop (3.4.4)
     terminal-table (1.4.5)
     thor (0.17.0)
@@ -64,6 +68,6 @@ DEPENDENCIES
   guard-rspec
   hash-to-ostruct
   rake
-  rcov
   roodi
   rspec
+  simplecov

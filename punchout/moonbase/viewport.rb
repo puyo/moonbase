@@ -3,7 +3,7 @@ module Moonbase
     attr_accessor :x, :y, :dx, :dy
 
     def initialize(opts = {})
-      @game = opts[:game]
+      @window = opts[:window]
       @x = @y = @dx = @dy = 0
     end
 
@@ -23,7 +23,7 @@ module Moonbase
     end
 
     def translate_draw(&block)
-      @game.window.translate(@x, @y, &block)
+      @window.translate(@x, @y, &block)
     end
 
     def update
